@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const ServerAddress = 'http://139.196.230.60:999/'
+const ServerAddress = ''
 
 export default {
   login (userName, password) {
