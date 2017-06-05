@@ -1,11 +1,18 @@
-import Vue from 'vue'
+import { destroyVM, createTest } from '../util'
 import Hello from '@/components/Hello'
 
 describe('Hello.vue', () => {
+  let vm
+
+  afterEach(() => {
+    destroyVM(vm)
+  })
+
   it('should render correct contents', () => {
-    const Constructor = Vue.extend(Hello)
-    const vm = new Constructor().$mount()
+    vm = createTest(Hello, {}, true)
     expect(vm.$el.querySelector('.hello h1').textContent)
+      .to.equal('Welcome to Your Vue.js App')
+    expect(vm.msg)
       .to.equal('Welcome to Your Vue.js App')
   })
 })
