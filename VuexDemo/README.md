@@ -1,18 +1,14 @@
-# hellovuex
+# Vuex Demo
 
-> A Vue.js project
+本项目写了关于Vuex使用的demo。本demo已经进行过优化，便于学习查看。
 
-## Build Setup
+## 查看效果
 
-``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
+```
+$ npm install
+$ npm run dev
 ```
 
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+## 文章地址
+
+[Vue.js学习系列二 —— vuex学习实践笔记（附DEMO）](http://www.jianshu.com/p/d6f7e11f18af)

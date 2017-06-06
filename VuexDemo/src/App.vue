@@ -1,8 +1,9 @@
 <template>
   <div id="app">
-    <!-- <hello></hello>
-    <helloo></helloo>
-    <single></single> -->
+    <h2>这是由多个组件修改一个state的例子，可以看到所有组件的state一同变化，而且每个组件中都可以操作state的变化。</h2>
+    <hr>
+    <hello></hello>
+    <!-- <single></single> -->
     <ma></ma>
     <mb></mb>
   </div>
@@ -10,7 +11,6 @@
 
 <script>
 import Hello from './components/Hello'
-import Helloo from './components/Hello02'
 import Single from './components/Single'
 import ma from './components/A'
 import mb from './components/B'
@@ -21,11 +21,7 @@ export default {
     ma,
     mb,
     Hello,
-    Helloo,
     Single,
-  },
-  mounted () {
-    //console.log(this.$store.state.count)
   }
 }
 </script>

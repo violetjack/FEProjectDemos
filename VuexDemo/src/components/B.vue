@@ -1,7 +1,7 @@
 <template>
   <div>
-    {{ $store.state.count }}
-    <button @click="increment">increment</button>
+    多页面显示同一个state数据：{{ $store.state.count }}
+    <button @click="increment">异步+5</button>
   </div>
 </template>
 
@@ -9,8 +9,8 @@
   export default {
     methods: {
       increment () {
-        //this.$store.commit('increment')
-        //this.$store.dispatch('incrementAsync')
+        // 使用actions异步提交mutations来修改state
+        // this.$store.dispatch('incrementAsync')
         this.$store.dispatch('incrementAsyncWithValue', 5)
       }
     }

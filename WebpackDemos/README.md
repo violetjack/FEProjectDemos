@@ -5,3 +5,7 @@
 * demo03 vue官方cli，分析cli结构
 * demo04 逐步实现使用babel-loader解析es6的简单demo
 * demo05 vue简易脚手架
+
+## 文章地址
+
+[Vue.js学习系列四 —— Webpack打包工具的使用](http://www.jianshu.com/p/aef34acd111f)

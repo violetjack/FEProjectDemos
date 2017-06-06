@@ -1,9 +1,6 @@
 <template>
   <div class="hello">
     <h1>page02</h1>
-    {{ $route.params.id }}
+    <span>获取动态路由的参数数据：{{ $route.params.id }}</span>
   </div>
 </template>
-
-<script>
-</script>

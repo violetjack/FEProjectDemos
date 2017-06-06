@@ -1,7 +1,7 @@
 <template>
   <div>
-    {{ $store.state.count }}
-    <button @click="increment">increment</button>
+    多页面显示同一个state数据： {{ $store.state.count }}
+    <button @click="increment">同步+1</button>
   </div>
 </template>
 
@@ -9,12 +9,9 @@
   export default {
     methods: {
       increment () {
+        // 使用mutations同步修改state
         this.$store.commit('increment')
       }
-    },
-    mounted () {
-      console.log(this.$store.state.count)
-      console.log(this.$store.getters.done)
     }
   }
 </script>

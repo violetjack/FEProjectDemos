@@ -1,6 +1,6 @@
-# VueStudyProject
+# MintUIDemo
 
-建立一个基于Vue.js开发的前端项目。
+建立一个基于Vue.js开发的移动前端项目。
 
 ## 运行步骤
 1. 安装node.js

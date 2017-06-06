@@ -11,7 +11,7 @@ export default [
   //嵌套路由
   { path: '/', component: Page01 },
   //动态路由
-  { path: '/02/:id', component: Page02 },
+  { name: 'Page02', path: '/02/:id', component: Page02 },
   //命名路由&路由传参
   { name: 'com03', path: '/03/:sex', component: Page03 },
   { path: '/04', component: Page04,
@@ -20,5 +20,5 @@ export default [
       { name: 'child02', path: '/c02', component: Child02 },
     ]
   },
-  { path: '/05', component: Page05 },
+  { name: 'Page05', path: '/05/:txt', component: Page05 },
 ]

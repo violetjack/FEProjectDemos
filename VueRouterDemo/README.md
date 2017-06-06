@@ -1,18 +1,14 @@
-# router
+# vue-router Demo
 
-> A Vue.js project
+本项目写了关于vue-router的使用demo。本demo已经进行过优化，便于学习查看。
 
-## Build Setup
+## 查看效果
 
-``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
+```
+$ npm install
+$ npm run dev
 ```
 
-For detailed explanation on how things work, checkout the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+## 文章地址
+
+[Vue.js学习系列一 —— vue-router2学习实践笔记（附DEMO）](http://www.jianshu.com/p/8013d8d37bd0)

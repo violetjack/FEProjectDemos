@@ -1,35 +1,38 @@
 <template>
   <div>
-    以声明方式将state映射到视图：
-    {{ count }}
-    {{ count1 }}
-    {{ $store.getters.done }}
-    <button @click="increment">increment</button>
-    <button @click="add">add</button>
+    获取state：{{ $store.state.count }} {{ getState }}
+    <br>
+    获取getter:{{ $store.getters.done }} {{ getGetter }}
+    <br>
+    提交mutations increment：
+    <button @click="increment">+1</button>
+    <br>
+    提交mutations add:
+    <button @click="add(5)">+5</button>
   </div>
 </template>
 
 <script>
   export default {
-    //state 驱动应用的数据源
-    data () {
-      return {
-        count: 0,
-      }
-    },
     //actions 响应在view上的用户输入导致的状态变化
     methods: {
       increment () {
+        // 逻辑为 state.count++
         this.$store.commit('increment')
       },
-      add () {
-        this.$store.commit('add', 10)
+      add (num) {
+        // 逻辑为 state.count += n
+        this.$store.commit('add', num)
       }
     },
     computed: {
-      count1 () {
+      // 代码获取state
+      getState () {
         return this.$store.state.count
       },
+      getGetter () {
+        return this.$store.getters.done
+      }
     }
   }
 </script>
