@@ -65,7 +65,7 @@ export function eventsMixin (Vue: Class<Component>) {
     const vm: Component = this
     function on () {
       vm.$off(event, on)
-      fn.apply(vm, arguments)
+      fn.apply(vm, arguments) // 学习以下JS中的apply和call方法
     }
     on.fn = fn
     vm.$on(event, on)
@@ -74,19 +74,19 @@ export function eventsMixin (Vue: Class<Component>) {
 
   Vue.prototype.$off = function (event?: string | Array<string>, fn?: Function): Component {
     const vm: Component = this
-    // all
+    // all 如果不传参，全部事件都off掉
     if (!arguments.length) {
       vm._events = Object.create(null)
       return vm
     }
-    // array of events
+    // array of events 事件数组
     if (Array.isArray(event)) {
       for (let i = 0, l = event.length; i < l; i++) {
         this.$off(event[i], fn)
       }
       return vm
     }
-    // specific event
+    // specific event 具体事件
     const cbs = vm._events[event]
     if (!cbs) {
       return vm
@@ -111,7 +111,7 @@ export function eventsMixin (Vue: Class<Component>) {
   Vue.prototype.$emit = function (event: string): Component {
     const vm: Component = this
     if (process.env.NODE_ENV !== 'production') {
-      const lowerCaseEvent = event.toLowerCase()
+      const lowerCaseEvent = event.toLowerCase() // toLowerCase方法用于把字符串转换为小写
       if (lowerCaseEvent !== event && vm._events[lowerCaseEvent]) {
         tip(
           `Event "${lowerCaseEvent}" is emitted in component ` +
@@ -128,7 +128,7 @@ export function eventsMixin (Vue: Class<Component>) {
       const args = toArray(arguments, 1)
       for (let i = 0, l = cbs.length; i < l; i++) {
         try {
-          cbs[i].apply(vm, args)
+          cbs[i].apply(vm, args) // 通过 event.apply来触发事件
         } catch (e) {
           handleError(e, vm, `event handler for "${event}"`)
         }

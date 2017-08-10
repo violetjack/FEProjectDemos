@@ -6,5 +6,7 @@
 
 * `this.options` 这个东西在哪儿，全局 `API` 就靠它了。
 
+* 学习以下JS中的apply和call方法
+
 * 
 

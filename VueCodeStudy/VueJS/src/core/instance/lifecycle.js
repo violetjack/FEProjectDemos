@@ -1,5 +1,6 @@
 /* @flow */
 
+// 生命周期 https://cn.vuejs.org/v2/guide/instance.html#实例生命周期
 import config from '../config'
 import Watcher from '../observer/watcher'
 import { mark, measure } from '../util/perf'
@@ -46,19 +47,24 @@ export function initLifecycle (vm: Component) {
   vm._isBeingDestroyed = false
 }
 
+// 混合生命周期
 export function lifecycleMixin (Vue: Class<Component>) {
   Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
     const vm: Component = this
+    // 如果是已经挂载的，就触发beforeUpdate方法。
     if (vm._isMounted) {
       callHook(vm, 'beforeUpdate')
     }
+    // 之前的对象
     const prevEl = vm.$el
     const prevVnode = vm._vnode
     const prevActiveInstance = activeInstance
+    // 活动实例
     activeInstance = vm
     vm._vnode = vnode
     // Vue.prototype.__patch__ is injected in entry points
     // based on the rendering backend used.
+    // __patch__ 补丁方法是注入基于后端渲染的的入口点
     if (!prevVnode) {
       // initial render
       vm.$el = vm.__patch__(
@@ -88,14 +94,14 @@ export function lifecycleMixin (Vue: Class<Component>) {
     // updated hook is called by the scheduler to ensure that children are
     // updated in a parent's updated hook.
   }
-
+  // 强制更新方法
   Vue.prototype.$forceUpdate = function () {
     const vm: Component = this
     if (vm._watcher) {
       vm._watcher.update()
     }
   }
-
+  // 销毁方法
   Vue.prototype.$destroy = function () {
     const vm: Component = this
     if (vm._isBeingDestroyed) {
@@ -135,7 +141,7 @@ export function lifecycleMixin (Vue: Class<Component>) {
     }
   }
 }
-
+// 挂载组件的方法
 export function mountComponent (
   vm: Component,
   el: ?Element,

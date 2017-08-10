@@ -3,9 +3,10 @@
 import config from 'core/config'
 import { warn, makeMap } from '../util/index'
 
-let initProxy
+let initProxy // 初始化代理
 
 if (process.env.NODE_ENV !== 'production') {
+  // 全局方法？
   const allowedGlobals = makeMap(
     'Infinity,undefined,NaN,isFinite,isNaN,' +
     'parseFloat,parseInt,decodeURI,decodeURIComponent,encodeURI,encodeURIComponent,' +
@@ -13,6 +14,7 @@ if (process.env.NODE_ENV !== 'production') {
     'require' // for Webpack/Browserify
   )
 
+  // 警告内容
   const warnNonPresent = (target, key) => {
     warn(
       `Property or method "${key}" is not defined on the instance but ` +
@@ -22,6 +24,7 @@ if (process.env.NODE_ENV !== 'production') {
     )
   }
 
+  // 是否有代理
   const hasProxy =
     typeof Proxy !== 'undefined' &&
     Proxy.toString().match(/native code/)
@@ -76,3 +79,5 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 export { initProxy }
+
+// 关键不了解这个Proxy是干什么用的。

@@ -30,7 +30,7 @@ export function initMixin (Vue: Class<Component>) {
 
     // 避免被观察的标志。
     vm._isVue = true
-    // merge options 合并配置
+    // merge options 如果有option就使用该option，否则合并options
     if (options && options._isComponent) {
       // optimize internal component instantiation
       // since dynamic options merging is pretty slow, and none of the
@@ -47,18 +47,21 @@ export function initMixin (Vue: Class<Component>) {
     if (process.env.NODE_ENV !== 'production') {
       initProxy(vm)
     } else {
+      // proxy 代理
       vm._renderProxy = vm
     }
-    // expose real self
+    // expose real self 暴露self对象
     vm._self = vm
+    // 初始化中……
     initLifecycle(vm)
     initEvents(vm)
     initRender(vm)
+    // 生命周期 beforeCreate https://cn.vuejs.org/v2/guide/instance.html#实例生命周期
     callHook(vm, 'beforeCreate')
-    initInjections(vm) // resolve injections before data/props
-    initState(vm)
-    initProvide(vm) // resolve provide after data/props
-    callHook(vm, 'created')
+    initInjections(vm) // 解决 injections 在 data/props 之前
+    initState(vm) // 初始化状态：data/props
+    initProvide(vm) // 解决 provide 在 data/props 之后
+    callHook(vm, 'created') // created 生命周期触发
 
     /* istanbul ignore if */
     if (process.env.NODE_ENV !== 'production' && config.performance && mark) {
@@ -68,14 +71,15 @@ export function initMixin (Vue: Class<Component>) {
     }
 
     if (vm.$options.el) {
-      vm.$mount(vm.$options.el)
+      vm.$mount(vm.$options.el) // 如果有el属性，将内容挂载到el中去。
     }
   }
 }
-
+// 初始化内部组件
 function initInternalComponent (vm: Component, options: InternalComponentOptions) {
+  // TODO 这里两个等号啥意思
   const opts = vm.$options = Object.create(vm.constructor.options)
-  // doing this because it's faster than dynamic enumeration.
+  // 这样做是因为它比动态枚举快。
   opts.parent = options.parent
   opts.propsData = options.propsData
   opts._parentVnode = options._parentVnode
@@ -90,6 +94,7 @@ function initInternalComponent (vm: Component, options: InternalComponentOptions
   }
 }
 
+// 解决构造函数的option，传入的为类型为Component的class类。
 export function resolveConstructorOptions (Ctor: Class<Component>) {
   let options = Ctor.options
   if (Ctor.super) {
@@ -114,6 +119,7 @@ export function resolveConstructorOptions (Ctor: Class<Component>) {
   return options
 }
 
+// 解决修改选项
 function resolveModifiedOptions (Ctor: Class<Component>): ?Object {
   let modified
   const latest = Ctor.options
@@ -128,6 +134,7 @@ function resolveModifiedOptions (Ctor: Class<Component>): ?Object {
   return modified
 }
 
+// 快速去重
 function dedupe (latest, extended, sealed) {
   // compare latest and sealed to ensure lifecycle hooks won't be duplicated
   // between merges
