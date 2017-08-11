@@ -1,9 +1,11 @@
 /* @flow */
 
+// https://cn.vuejs.org/v2/api/#provide-inject
 import { warn } from '../util/index'
 import { hasSymbol } from 'core/util/env'
 import { defineReactive, observerState } from '../observer/index'
 
+// 初始化provide
 export function initProvide (vm: Component) {
   const provide = vm.$options.provide
   if (provide) {
@@ -13,6 +15,7 @@ export function initProvide (vm: Component) {
   }
 }
 
+// 初始化注入
 export function initInjections (vm: Component) {
   const result = resolveInject(vm.$options.inject, vm)
   if (result) {
@@ -36,9 +39,11 @@ export function initInjections (vm: Component) {
   }
 }
 
+// 解决注入
 export function resolveInject (inject: any, vm: Component): ?Object {
   if (inject) {
     // inject is :any because flow is not smart enough to figure out cached
+    // inject 是any类型是因为流没有智能到计算出缓存。
     const result = Object.create(null)
     const keys = hasSymbol
         ? Reflect.ownKeys(inject)
@@ -53,6 +58,7 @@ export function resolveInject (inject: any, vm: Component): ?Object {
           result[key] = source._provided[provideKey]
           break
         }
+        // source改为父级容器知道没有父级容器为止。
         source = source.$parent
       }
       if (process.env.NODE_ENV !== 'production' && !source) {

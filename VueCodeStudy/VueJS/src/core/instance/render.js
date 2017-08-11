@@ -1,5 +1,5 @@
 /* @flow */
-
+// 渲染函数 https://cn.vuejs.org/v2/guide/render-function.html
 import {
   warn,
   nextTick,
@@ -127,6 +127,8 @@ export function renderMixin (Vue: Class<Component>) {
   // internal render helpers.
   // these are exposed on the instance prototype to reduce generated render
   // code size.
+  // 内部渲染 helpers
+  // 这些在实例原型上公开，以减少生成的呈现代码大小。
   Vue.prototype._o = markOnce
   Vue.prototype._n = toNumber
   Vue.prototype._s = toString

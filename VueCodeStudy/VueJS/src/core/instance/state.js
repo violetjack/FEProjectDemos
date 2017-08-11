@@ -1,4 +1,5 @@
 /* @flow */
+// https://cn.vuejs.org/v2/api/#选项-数据
 
 import config from '../config'
 import Dep from '../observer/dep'

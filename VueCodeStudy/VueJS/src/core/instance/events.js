@@ -1,5 +1,6 @@
 /* @flow */
 
+// https://cn.vuejs.org/v2/api/#实例方法-事件
 import {
   tip,
   toArray,
