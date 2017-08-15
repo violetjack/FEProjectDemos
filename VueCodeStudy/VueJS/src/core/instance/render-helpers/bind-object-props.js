@@ -41,11 +41,11 @@ export function bindObjectProps (
           const type = data.attrs && data.attrs.type
           hash = asProp || config.mustUseProp(tag, type, key)
             ? data.domProps || (data.domProps = {})
-            : data.attrs || (data.attrs = {})
+            : data.attrs || (data.attrs = {}) // 如果没有数据则数据为空，与或非在这里用的奇形怪状的，不过看着很简洁~
         }
-        if (!(key in hash)) {
+        if (!(key in hash)) { // 判断hash对象是否没有key属性
           hash[key] = value[key]
-
+          // props的双向绑定
           if (isSync) {
             const on = data.on || (data.on = {})
             on[`update:${key}`] = function ($event) {

@@ -1,18 +1,21 @@
 /* @flow */
-
+// 调度器
 import type Watcher from './watcher'
 import config from '../config'
 import { callHook, activateChildComponent } from '../instance/lifecycle'
 
 import {
   warn,
-  nextTick,
+  nextTick, // 这个类挺重要的
   devtools
 } from '../util/index'
 
+// 最大更新数量
 export const MAX_UPDATE_COUNT = 100
 
+// watcher队列
 const queue: Array<Watcher> = []
+// 响应式组件
 const activatedChildren: Array<Component> = []
 let has: { [key: number]: ?true } = {}
 let circular: { [key: number]: number } = {}
@@ -22,6 +25,7 @@ let index = 0
 
 /**
  * Reset the scheduler's state.
+ * 重置调度器状态
  */
 function resetSchedulerState () {
   index = queue.length = activatedChildren.length = 0
@@ -34,12 +38,14 @@ function resetSchedulerState () {
 
 /**
  * Flush both queues and run the watchers.
+ * 刷新队列并运行watcher
  */
 function flushSchedulerQueue () {
   flushing = true
   let watcher, id
 
   // Sort queue before flush.
+  // 在刷新前对队列排序
   // This ensures that:
   // 1. Components are updated from parent to child. (because parent is always
   //    created before the child)
@@ -60,6 +66,7 @@ function flushSchedulerQueue () {
     if (process.env.NODE_ENV !== 'production' && has[id] != null) {
       circular[id] = (circular[id] || 0) + 1
       if (circular[id] > MAX_UPDATE_COUNT) {
+        // infinite 无限
         warn(
           'You may have an infinite update loop ' + (
             watcher.user
@@ -74,24 +81,30 @@ function flushSchedulerQueue () {
   }
 
   // keep copies of post queues before resetting state
+  // 在重置状态之前保留提交队列的副本
+  // slice() 方法可从已有的数组中返回选定的元素，类似复制元素吧。
   const activatedQueue = activatedChildren.slice()
   const updatedQueue = queue.slice()
 
   resetSchedulerState()
 
   // call component updated and activated hooks
+  // 调用组件的updated和activated生命周期
   callActivatedHooks(activatedQueue)
   callUpdatedHooks(updatedQueue)
 
   // devtool hook
+  // 如果有devtool，触发flush方法
   /* istanbul ignore if */
   if (devtools && config.devtools) {
     devtools.emit('flush')
   }
 }
 
+// 调用组件的updated生命周期钩子
 function callUpdatedHooks (queue) {
   let i = queue.length
+  // 这不是死循环吗
   while (i--) {
     const watcher = queue[i]
     const vm = watcher.vm
@@ -104,6 +117,7 @@ function callUpdatedHooks (queue) {
 /**
  * Queue a kept-alive component that was activated during patch.
  * The queue will be processed after the entire tree has been patched.
+ * activated 只会在 keep-alive 组件激活时调用。
  */
 export function queueActivatedComponent (vm: Component) {
   // setting _inactive to false here so that a render function can
@@ -111,7 +125,7 @@ export function queueActivatedComponent (vm: Component) {
   vm._inactive = false
   activatedChildren.push(vm)
 }
-
+// 调用activated生命周期钩子
 function callActivatedHooks (queue) {
   for (let i = 0; i < queue.length; i++) {
     queue[i]._inactive = true
@@ -123,13 +137,16 @@ function callActivatedHooks (queue) {
  * Push a watcher into the watcher queue.
  * Jobs with duplicate IDs will be skipped unless it's
  * pushed when the queue is being flushed.
+ * 
+ * 推送一个watcher到watcher队列。
+ * 具有重复id的作业将被跳过，除非在队列被刷新时被推送。
  */
 export function queueWatcher (watcher: Watcher) {
   const id = watcher.id
   if (has[id] == null) {
-    has[id] = true
+    has[id] = true // 此参数用于判断watcher的ID是否存在
     if (!flushing) {
-      queue.push(watcher)
+      queue.push(watcher) // 推送到队列中
     } else {
       // if already flushing, splice the watcher based on its id
       // if already past its id, it will be run next immediately.
@@ -137,7 +154,7 @@ export function queueWatcher (watcher: Watcher) {
       while (i > index && queue[i].id > watcher.id) {
         i--
       }
-      queue.splice(i + 1, 0, watcher)
+      queue.splice(i + 1, 0, watcher) // 重组数组
     }
     // queue the flush
     if (!waiting) {

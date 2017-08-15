@@ -11,3 +11,14 @@ Vue中有很多用 `$` 符号来显示的属性，需要进行了解~这些属�
 ## Vue 组件交互方式
 
 ![Vue 组件交互关键图](https://cn.vuejs.org/images/props-events.png)
+
+### instanceof && typeof
+
+`instanceof`判断类型，返回值为`true or false`，而`typeof`是获取类型，返回的是`string number`等类型字符串。
+
+## 观察者笔记
+
+`__ob__`是观察者，用来设置setter或getter，而`__proto__`为原型，具体作用有待讨论。这两个都可以在`console.log`中看到~
+
+**由于 Vue 不允许动态添加根级响应式属性**，所以你必须在初始化实例前声明根级响应式属性，哪怕只是一个空值。
+

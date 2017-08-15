@@ -1,5 +1,5 @@
 /* @flow */
-
+// watcher类
 import { queueWatcher } from './scheduler'
 import Dep, { pushTarget, popTarget } from './dep'
 
@@ -130,6 +130,7 @@ export default class Watcher {
 
   /**
    * Clean up for dependency collection.
+   * 清除依赖集合
    */
   cleanupDeps () {
     let i = this.deps.length

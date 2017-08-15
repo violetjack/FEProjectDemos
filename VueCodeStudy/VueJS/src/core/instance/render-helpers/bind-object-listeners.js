@@ -2,6 +2,7 @@
 
 import { warn, extend, isPlainObject } from 'core/util/index'
 
+// 绑定对象监听
 export function bindObjectListeners (data: any, value: any): VNodeData {
   if (value) {
     if (!isPlainObject(value)) {

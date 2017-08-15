@@ -4,6 +4,7 @@ import config from 'core/config'
 
 /**
  * Runtime helper for checking keyCodes from config.
+ * 判断按键码
  */
 export function checkKeyCodes (
   eventKeyCode: number,

@@ -10,6 +10,8 @@ export const arrayMethods = Object.create(arrayProto)
 
 /**
  * Intercept mutating methods and emit events
+ * 拦截方法事件
+ * https://cn.vuejs.org/v2/guide/list.html#变异方法
  */
 ;[
   'push',
@@ -26,6 +28,7 @@ export const arrayMethods = Object.create(arrayProto)
   def(arrayMethods, method, function mutator (...args) {
     const result = original.apply(this, args)
     const ob = this.__ob__
+    // 传参
     let inserted
     switch (method) {
       case 'push':
@@ -37,7 +40,7 @@ export const arrayMethods = Object.create(arrayProto)
         break
     }
     if (inserted) ob.observeArray(inserted)
-    // notify change
+    // notify change 通知变化
     ob.dep.notify()
     return result
   })
