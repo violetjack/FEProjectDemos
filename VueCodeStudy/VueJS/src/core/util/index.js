@@ -8,4 +8,5 @@ export * from './options'
 export * from './debug'
 export * from './props'
 export * from './error'
+// 定义相应
 export { defineReactive } from '../observer/index'

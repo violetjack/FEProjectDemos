@@ -1,10 +1,10 @@
 /* @flow */
-
+// 合并周期
 import { createFnInvoker } from './update-listeners'
 import { remove, isDef, isUndef, isTrue } from 'shared/util'
 
 export function mergeVNodeHook (def: Object, hookKey: string, hook: Function) {
-  let invoker
+  let invoker // invoker 调用程序
   const oldHook = def[hookKey]
 
   function wrappedHook () {

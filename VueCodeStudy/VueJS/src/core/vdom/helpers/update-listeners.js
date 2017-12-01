@@ -1,8 +1,9 @@
 /* @flow */
-
+// 更新监听
 import { warn } from 'core/util/index'
 import { cached, isUndef } from 'shared/util'
 
+// 正常事件
 const normalizeEvent = cached((name: string): {
   name: string,
   once: boolean,
@@ -22,7 +23,7 @@ const normalizeEvent = cached((name: string): {
     passive
   }
 })
-
+// 调用方法、方法列表
 export function createFnInvoker (fns: Function | Array<Function>): Function {
   function invoker () {
     const fns = invoker.fns
@@ -40,6 +41,7 @@ export function createFnInvoker (fns: Function | Array<Function>): Function {
   return invoker
 }
 
+// 更新监听器
 export function updateListeners (
   on: Object,
   oldOn: Object,

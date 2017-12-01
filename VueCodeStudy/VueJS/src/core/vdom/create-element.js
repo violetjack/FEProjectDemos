@@ -1,5 +1,6 @@
 /* @flow */
 
+// 创建元素
 import config from '../config'
 import VNode, { createEmptyVNode } from './vnode'
 import { createComponent } from './create-component'
@@ -51,7 +52,7 @@ export function _createElement (
 ): VNode {
   if (isDef(data) && isDef((data: any).__ob__)) {
     process.env.NODE_ENV !== 'production' && warn(
-      `Avoid using observed data object as vnode data: ${JSON.stringify(data)}\n` +
+      'Avoid using observed data object as vnode data:' + JSON.stringify(data) + '\n' +
       'Always create fresh vnode data objects in each render!',
       context
     )
@@ -70,6 +71,7 @@ export function _createElement (
     isDef(data) && isDef(data.key) && !isPrimitive(data.key)
   ) {
     warn(
+      // primitive 原始的
       'Avoid using non-primitive value as key, ' +
       'use string/number value instead.',
       context

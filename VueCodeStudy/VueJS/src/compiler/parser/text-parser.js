@@ -3,6 +3,7 @@
 import { cached } from 'shared/util'
 import { parseFilters } from './filter-parser'
 
+// 好多正则表达式 看http://www.runoob.com/regexp/regexp-syntax.html
 const defaultTagRE = /\{\{((?:.|\n)+?)\}\}/g
 const regexEscapeRE = /[-.*+?^${}()|[\]\/\\]/g
 

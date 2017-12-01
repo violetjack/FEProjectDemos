@@ -5,7 +5,7 @@ import { isRegExp } from 'shared/util'
 // 传入VNode数组，返回一个VNode。返回VNode数组中的第一个VNode。
 import { getFirstComponentChild } from 'core/vdom/helpers/index'
 
-// VNode 缓存？
+// VNode 缓存
 type VNodeCache = { [key: string]: ?VNode };
 
 // 模式类型

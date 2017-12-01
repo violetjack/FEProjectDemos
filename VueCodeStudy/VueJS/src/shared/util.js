@@ -73,7 +73,7 @@ export function isValidArrayIndex (val: any): boolean {
 /**
  * Convert a value to a string that is actually rendered.
  */
-// 转文本方法
+// toString转文本方法
 export function toString (val: any): string {
   return val == null
     ? ''
@@ -95,6 +95,8 @@ export function toNumber (val: string): number | string {
 /**
  * Make a map and return a function for checking if a key
  * is in that map.
+ * 
+ * 创建一个map返回一个方法确认key是否在map中
  */
 export function makeMap (
   str: string,
@@ -122,11 +124,14 @@ export const isReservedAttribute = makeMap('key,ref,slot,is')
 
 /**
  * Remove an item from an array
+ * 
+ * 从一个array中移除一个项目
  */
 export function remove (arr: Array<any>, item: any): Array<any> | void {
   if (arr.length) {
     const index = arr.indexOf(item)
     if (index > -1) {
+      // Array的splice方法：向/从数组中添加/删除项目，然后返回被删除的项目。
       return arr.splice(index, 1)
     }
   }
@@ -134,6 +139,8 @@ export function remove (arr: Array<any>, item: any): Array<any> | void {
 
 /**
  * Check whether the object has the property.
+ * 
+ * 确认是否对象中有属性
  */
 const hasOwnProperty = Object.prototype.hasOwnProperty
 export function hasOwn (obj: Object | Array<*>, key: string): boolean {
@@ -142,6 +149,8 @@ export function hasOwn (obj: Object | Array<*>, key: string): boolean {
 
 /**
  * Create a cached version of a pure function.
+ * 
+ * 创建一个方法的缓存版本
  */
 export function cached<F: Function> (fn: F): F {
   const cache = Object.create(null)
@@ -161,9 +170,11 @@ export const camelize = cached((str: string): string => {
 
 /**
  * Capitalize a string.
+ * 
+ * 字符串首字母大写
  */
 export const capitalize = cached((str: string): string => {
-  return str.charAt(0).toUpperCase() + str.slice(1)
+  return str.charAt(0).toUpperCase() + str.slice(1) // 字符串第一个字符转换为大写，之后照常。
 })
 
 /**
@@ -179,6 +190,8 @@ export const hyphenate = cached((str: string): string => {
 
 /**
  * Simple bind, faster than native
+ * 
+ * 简单绑定，比native的快
  */
 export function bind (fn: Function, ctx: Object): Function {
   function boundFn (a) {
@@ -196,6 +209,8 @@ export function bind (fn: Function, ctx: Object): Function {
 
 /**
  * Convert an Array-like object to a real Array.
+ * 
+ * 转换一个类数组对象为一个真实数组
  */
 export function toArray (list: any, start?: number): Array<any> {
   start = start || 0
@@ -209,6 +224,8 @@ export function toArray (list: any, start?: number): Array<any> {
 
 /**
  * Mix properties into target object.
+ * 
+ * 混合属性到目标对象中
  */
 export function extend (to: Object, _from: ?Object): Object {
   for (const key in _from) {
@@ -219,6 +236,8 @@ export function extend (to: Object, _from: ?Object): Object {
 
 /**
  * Merge an Array of Objects into a single Object.
+ * 
+ * 合并一个对象数组为单个对象。
  */
 export function toObject (arr: Array<any>): Object {
   const res = {}

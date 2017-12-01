@@ -13,9 +13,9 @@ let uid = 0
  */
 export default class Dep {
   // 属性
-  static target: ?Watcher;
+  static target: ?Watcher; // 表示正在计算的watcher，它是全局唯一的，同时只能有一个watcher被计算
   id: number;
-  subs: Array<Watcher>;
+  subs: Array<Watcher>; // 用于存储所有订阅该Dep的watcher
 
   // 构造函数
   constructor () {
@@ -33,16 +33,16 @@ export default class Dep {
     remove(this.subs, sub)
   }
 
-  // 依赖watcher
+  // 依赖watcher 用于data的getter
   depend () {
     if (Dep.target) {
       Dep.target.addDep(this)
     }
   }
 
-  // 通知
+  // 通知 用于data的setter
   notify () {
-    // 首先稳定用户列表
+    // 首先稳定用户列表，subs是Watcher数组
     const subs = this.subs.slice()
     for (let i = 0, l = subs.length; i < l; i++) {
       subs[i].update()

@@ -1,5 +1,7 @@
 /* @flow */
 
+// VNode接口
+// 就一些属性和一个构造函数
 export default class VNode {
   tag: string | void;
   data: VNodeData | void;
@@ -64,6 +66,7 @@ export default class VNode {
   }
 }
 
+// 创建空的 VNode
 export const createEmptyVNode = (text: string = '') => {
   const node = new VNode()
   node.text = text
@@ -71,6 +74,7 @@ export const createEmptyVNode = (text: string = '') => {
   return node
 }
 
+// 创建文本 VNode
 export function createTextVNode (val: string | number) {
   return new VNode(undefined, undefined, undefined, String(val))
 }
@@ -79,6 +83,9 @@ export function createTextVNode (val: string | number) {
 // used for static nodes and slot nodes because they may be reused across
 // multiple renders, cloning them avoids errors when DOM manipulations rely
 // on their elm reference.
+// 优化的浅克隆
+// 用于静态节点和槽节点，因为它们可以在多个渲染中重用，当DOM操作依赖于它们的elm引用时，克隆它们可以避免错误。
+// 而不是直接等于号解决问题。
 export function cloneVNode (vnode: VNode): VNode {
   const cloned = new VNode(
     vnode.tag,
@@ -98,9 +105,10 @@ export function cloneVNode (vnode: VNode): VNode {
   return cloned
 }
 
+// 克隆一大波VNode
 export function cloneVNodes (vnodes: Array<VNode>): Array<VNode> {
   const len = vnodes.length
-  const res = new Array(len)
+  const res = new Array(len) // 新建一个长度为len的Array
   for (let i = 0; i < len; i++) {
     res[i] = cloneVNode(vnodes[i])
   }

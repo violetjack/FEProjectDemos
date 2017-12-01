@@ -11,7 +11,7 @@
  * Not type-checking this because this file is perf-critical and the cost
  * of making flow understand it is not worth it.
  */
-
+// 补丁？
 import VNode from './vnode'
 import config from '../config'
 import { SSR_ATTR } from 'shared/constants'
@@ -27,10 +27,11 @@ import {
   isPrimitive
 } from '../util/index'
 
+// 空的 VNode
 export const emptyNode = new VNode('', {}, [])
-
+// 生命周期
 const hooks = ['create', 'activate', 'update', 'remove', 'destroy']
-
+// 相似 VNode
 function sameVnode (a, b) {
   return (
     a.key === b.key && (
@@ -50,6 +51,7 @@ function sameVnode (a, b) {
 
 // Some browsers do not support dynamically changing type for <input>
 // so they need to be treated as different nodes
+// 一些浏览器不支持动态变化类型的<input>，所以他们需要以不同的node处理
 function sameInputType (a, b) {
   if (a.tag !== 'input') return true
   let i
@@ -68,6 +70,7 @@ function createKeyToOldIdx (children, beginIdx, endIdx) {
   return map
 }
 
+// 创建补丁方法
 export function createPatchFunction (backend) {
   let i, j
   const cbs = {}
@@ -100,6 +103,7 @@ export function createPatchFunction (backend) {
   function removeNode (el) {
     const parent = nodeOps.parentNode(el)
     // element may have already been removed due to v-html / v-text
+    // 元素可能会由于 v-html / v-text 而被移除
     if (isDef(parent)) {
       nodeOps.removeChild(parent, el)
     }
@@ -178,6 +182,7 @@ export function createPatchFunction (backend) {
     }
   }
 
+  // 创建组件
   function createComponent (vnode, insertedVnodeQueue, parentElm, refElm) {
     let i = vnode.data
     if (isDef(i)) {
@@ -199,6 +204,7 @@ export function createPatchFunction (backend) {
     }
   }
 
+  // 初始化组件
   function initComponent (vnode, insertedVnodeQueue) {
     if (isDef(vnode.data.pendingInsert)) {
       insertedVnodeQueue.push.apply(insertedVnodeQueue, vnode.data.pendingInsert)
@@ -217,6 +223,7 @@ export function createPatchFunction (backend) {
     }
   }
 
+  // 重新激活组件
   function reactivateComponent (vnode, insertedVnodeQueue, parentElm, refElm) {
     let i
     // hack for #4339: a reactivated component with inner transition

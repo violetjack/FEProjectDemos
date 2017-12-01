@@ -1,5 +1,5 @@
 /* @flow */
-
+// 配置
 import config from '../config'
 import { warn } from './debug'
 import { nativeWatch } from './env'
@@ -23,11 +23,15 @@ import {
  * Option overwriting strategies are functions that handle
  * how to merge a parent option value and a child option
  * value into the final value.
+ * 
+ * 选项覆盖策略是处理如何将父选项值和子选项值合并到最终值的函数。
  */
 const strats = config.optionMergeStrategies
 
 /**
  * Options with restrictions
+ * 
+ * 带有限制的配置
  */
 if (process.env.NODE_ENV !== 'production') {
   strats.el = strats.propsData = function (parent, child, vm, key) {
@@ -43,6 +47,8 @@ if (process.env.NODE_ENV !== 'production') {
 
 /**
  * Helper that recursively merges two data objects together.
+ * 
+ * 递归地将两个 data 对象合并到一起的 Helper
  */
 function mergeData (to: Object, from: ?Object): Object {
   if (!from) return to
@@ -62,7 +68,7 @@ function mergeData (to: Object, from: ?Object): Object {
 }
 
 /**
- * Data
+ * 合并data或者function，返回方法
  */
 export function mergeDataOrFn (
   parentVal: any,
@@ -90,7 +96,7 @@ export function mergeDataOrFn (
     }
   } else if (parentVal || childVal) {
     return function mergedInstanceDataFn () {
-      // instance merge
+      // instance merge 实例合并
       const instanceData = typeof childVal === 'function'
         ? childVal.call(vm)
         : childVal
@@ -105,7 +111,7 @@ export function mergeDataOrFn (
     }
   }
 }
-
+// 配置的data
 strats.data = function (
   parentVal: any,
   childVal: any,
@@ -130,11 +136,14 @@ strats.data = function (
 
 /**
  * Hooks and props are merged as arrays.
+ * 
+ * 生命周期和 props 被合并成数组
  */
 function mergeHook (
   parentVal: ?Array<Function>,
   childVal: ?Function | ?Array<Function>
 ): ?Array<Function> {
+  // 源码中经常会用到多重三元运算
   return childVal
     ? parentVal
       ? parentVal.concat(childVal)
@@ -168,6 +177,7 @@ ASSET_TYPES.forEach(function (type) {
 
 /**
  * Watchers.
+ * Options的watchers
  *
  * Watchers hashes should not overwrite one
  * another, so we merge them as arrays.
@@ -211,6 +221,7 @@ strats.provide = mergeDataOrFn
 
 /**
  * Default strategy.
+ * 默认策略
  */
 const defaultStrat = function (parentVal: any, childVal: any): any {
   return childVal === undefined
@@ -220,6 +231,7 @@ const defaultStrat = function (parentVal: any, childVal: any): any {
 
 /**
  * Validate component names
+ * 验证组件名称
  */
 function checkComponents (options: Object) {
   for (const key in options.components) {
@@ -236,6 +248,8 @@ function checkComponents (options: Object) {
 /**
  * Ensure all props option syntax are normalized into the
  * Object-based format.
+ * 
+ * normalize 正常的
  */
 function normalizeProps (options: Object) {
   const props = options.props

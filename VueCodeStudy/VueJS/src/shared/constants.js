@@ -3,9 +3,9 @@ export const SSR_ATTR = 'data-server-rendered'
 
 // 资源类型
 export const ASSET_TYPES = [
-  'component',
-  'directive',
-  'filter'
+  'component',  // 组件
+  'directive',  // 自定义命令
+  'filter'      // 过滤器
 ]
 
 // 生命周期数据。

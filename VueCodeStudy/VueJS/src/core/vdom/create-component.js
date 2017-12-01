@@ -1,5 +1,6 @@
 /* @flow */
 
+// 创建组件
 import VNode from './vnode'
 import { resolveConstructorOptions } from 'core/instance/init'
 import { queueActivatedComponent } from 'core/observer/scheduler'
@@ -35,6 +36,7 @@ const componentVNodeHooks = {
     parentElm: ?Node,
     refElm: ?Node
   ): ?boolean {
+    // 组件实例不存在或者被销毁
     if (!vnode.componentInstance || vnode.componentInstance._isDestroyed) {
       const child = vnode.componentInstance = createComponentInstanceForVnode(
         vnode,
@@ -44,12 +46,13 @@ const componentVNodeHooks = {
       )
       child.$mount(hydrating ? vnode.elm : undefined, hydrating)
     } else if (vnode.data.keepAlive) {
+      // keepAlive状态
       // kept-alive components, treat as a patch
       const mountedNode: any = vnode // work around flow
       componentVNodeHooks.prepatch(mountedNode, mountedNode)
     }
   },
-
+  // 预补丁
   prepatch (oldVnode: MountedComponentVNode, vnode: MountedComponentVNode) {
     const options = vnode.componentOptions
     const child = vnode.componentInstance = oldVnode.componentInstance

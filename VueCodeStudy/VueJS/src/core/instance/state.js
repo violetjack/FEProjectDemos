@@ -33,7 +33,7 @@ const sharedPropertyDefinition = {
   get: noop,
   set: noop
 }
-
+// proxy 方法主要通过 Object.defineProperty 的 getter 和 setter 方法实现了代理。
 export function proxy (target: Object, sourceKey: string, key: string) {
   sharedPropertyDefinition.get = function proxyGetter () {
     return this[sourceKey][key]
@@ -152,7 +152,7 @@ function initData (vm: Component) {
       proxy(vm, `_data`, key)
     }
   }
-  // observe data
+  // observe data 对data进行一个观察
   observe(data, true /* asRootData */)
 }
 

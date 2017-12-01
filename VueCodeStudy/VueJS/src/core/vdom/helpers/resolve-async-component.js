@@ -1,5 +1,5 @@
 /* @flow */
-
+// 解决异步组件
 import {
   warn,
   once,

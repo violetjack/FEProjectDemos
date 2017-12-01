@@ -1,5 +1,5 @@
 /* @flow */
-
+// 调试工具
 import config from '../config'
 import { noop } from 'shared/util'
 
@@ -14,6 +14,7 @@ if (process.env.NODE_ENV !== 'production') {
     .replace(classifyRE, c => c.toUpperCase())
     .replace(/[-_]/g, '')
 
+    // 警告
   warn = (msg, vm) => {
     const trace = vm ? generateComponentTrace(vm) : ''
 
@@ -24,6 +25,7 @@ if (process.env.NODE_ENV !== 'production') {
     }
   }
 
+  // tip
   tip = (msg, vm) => {
     if (hasConsole && (!config.silent)) {
       console.warn(`[Vue tip]: ${msg}` + (
@@ -32,7 +34,9 @@ if (process.env.NODE_ENV !== 'production') {
     }
   }
 
+  // 格式化容器名称
   formatComponentName = (vm, includeFile) => {
+    // $root 当前组件树的根 Vue 实例。如果当前实例没有父实例，此实例将会是其自己。
     if (vm.$root === vm) {
       return '<Root>'
     }
@@ -66,6 +70,7 @@ if (process.env.NODE_ENV !== 'production') {
     return res
   }
 
+  // 生成组件跟踪
   const generateComponentTrace = vm => {
     if (vm._isVue && vm.$parent) {
       const tree = []

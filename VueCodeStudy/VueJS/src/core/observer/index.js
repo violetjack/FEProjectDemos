@@ -117,7 +117,7 @@ function copyAugment (target: Object, src: Object, keys: Array<string>) {
  * returns the new observer if successfully observed,
  * or the existing observer if the value already has one.
  * 
- * 尝试对一个value创建一个观察者实例，如果成功观察返回一个新的观察者，如果value已经存在则返回一个已存在的观察者。
+ * 尝试对一个value创建一个观察者实例，如果成功观察返回一个新的watcher，如果value已经存在则返回一个已存在的观察者。
  */
 export function observe (value: any, asRootData: ?boolean): Observer | void {
   // value 必须是对象
@@ -148,7 +148,12 @@ export function observe (value: any, asRootData: ?boolean): Observer | void {
 /**
  * Define a reactive property on an Object.
  * 
- * 在一个对象上定义一个相应属性
+ * 在一个对象上定义一个相应属性，双向绑定核心在此
+ * 
+ * defineReactive 方法最核心的部分就是通过调用 Object.defineProperty 给 data 的每个属性添加 getter 和setter 方法。
+ * 当 data 的某个属性被访问时，则会调用 getter 方法，判断当 Dep.target 不为空时调用 dep.depend 和 childObj.dep.depend 方法
+ * 做依赖收集。如果访问的属性是一个数组，则会遍历这个数组收集数组元素的依赖。当改变 data 的属性时，则会调用 setter 方法，
+ * 这时调用 dep.notify 方法进行通知。这里我们提到了 dep，它是 Dep 对象的实例。
  */
 export function defineReactive (
   obj: Object,

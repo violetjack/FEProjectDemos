@@ -1,5 +1,6 @@
 /* @flow */
 
+// 创建方法类组件
 import VNode from './vnode'
 import { createElement } from './create-element'
 import { resolveInject } from '../instance/inject'

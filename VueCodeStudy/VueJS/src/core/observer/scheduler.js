@@ -45,7 +45,7 @@ function flushSchedulerQueue () {
   let watcher, id
 
   // Sort queue before flush.
-  // 在刷新前对队列排序
+  // 在刷新前对队列按照id排序
   // This ensures that:
   // 1. Components are updated from parent to child. (because parent is always
   //    created before the child)
@@ -154,7 +154,7 @@ export function queueWatcher (watcher: Watcher) {
       while (i > index && queue[i].id > watcher.id) {
         i--
       }
-      queue.splice(i + 1, 0, watcher) // 重组数组
+      queue.splice(i + 1, 0, watcher) // 重组数组 在queue的第i+1里面添加一个watcher
     }
     // queue the flush
     if (!waiting) {
