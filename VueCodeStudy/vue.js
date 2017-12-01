@@ -2434,7 +2434,8 @@ function getFirstComponentChild (children) {
 }
 
 /* events.js */
-
+// 重点查看学习Vue事件的实现逻辑。
+// https://cn.vuejs.org/v2/api/#实例方法-事件
 function initEvents (vm) {
   vm._events = Object.create(null);
   vm._hasHookEvent = false;
@@ -2650,7 +2651,7 @@ function resolveScopedSlots (
 
 var activeInstance = null;
 var isUpdatingChildComponent = false;
-
+//  初始化生命周期
 function initLifecycle (vm) {
   var options = vm.$options;
 
@@ -2662,10 +2663,11 @@ function initLifecycle (vm) {
     }
     parent.$children.push(vm);
   }
-
+  // 获取最上层容器为parent，其他容器存入children中
   vm.$parent = parent;
   vm.$root = parent ? parent.$root : vm;
 
+  // 清空
   vm.$children = [];
   vm.$refs = {};
 
@@ -2676,8 +2678,9 @@ function initLifecycle (vm) {
   vm._isDestroyed = false;
   vm._isBeingDestroyed = false;
 }
-
+// 混合生命周期
 function lifecycleMixin (Vue) {
+  // 更新
   Vue.prototype._update = function (vnode, hydrating) {
     var vm = this;
     if (vm._isMounted) {
@@ -2719,14 +2722,14 @@ function lifecycleMixin (Vue) {
     // updated hook is called by the scheduler to ensure that children are
     // updated in a parent's updated hook.
   };
-
+  // 强制更新
   Vue.prototype.$forceUpdate = function () {
     var vm = this;
     if (vm._watcher) {
       vm._watcher.update();
     }
   };
-
+  // 销毁
   Vue.prototype.$destroy = function () {
     var vm = this;
     if (vm._isBeingDestroyed) {
@@ -2770,7 +2773,7 @@ function lifecycleMixin (Vue) {
     }
   };
 }
-
+// 挂在容器的行为
 function mountComponent (
   vm,
   el,
@@ -2797,6 +2800,7 @@ function mountComponent (
       }
     }
   }
+  // 在挂载开始之前被调用：相关的 render 函数首次被调用。
   callHook(vm, 'beforeMount');
 
   var updateComponent;
@@ -2825,17 +2829,20 @@ function mountComponent (
   }
 
   vm._watcher = new Watcher(vm, updateComponent, noop);
+  // 吸水的
   hydrating = false;
 
   // manually mounted instance, call mounted on self
   // mounted is called for render-created child components in its inserted hook
+  // 手动挂载实例，自我调用mounted周期。
   if (vm.$vnode == null) {
     vm._isMounted = true;
+    // el 被新创建的 vm.$el 替换，并挂载到实例上去之后调用该钩子。
     callHook(vm, 'mounted');
   }
   return vm
 }
-
+// 更新子级容器
 function updateChildComponent (
   vm,
   propsData,
@@ -2901,6 +2908,7 @@ function updateChildComponent (
   }
 }
 
+// 是否在不活跃的树下
 function isInInactiveTree (vm) {
   while (vm && (vm = vm.$parent)) {
     if (vm._inactive) { return true }
@@ -2922,10 +2930,11 @@ function activateChildComponent (vm, direct) {
     for (var i = 0; i < vm.$children.length; i++) {
       activateChildComponent(vm.$children[i]);
     }
+    // keep-alive 组件激活时调用。
     callHook(vm, 'activated');
   }
 }
-
+// deactivate 释放
 function deactivateChildComponent (vm, direct) {
   if (direct) {
     vm._directInactive = true;
@@ -2938,10 +2947,11 @@ function deactivateChildComponent (vm, direct) {
     for (var i = 0; i < vm.$children.length; i++) {
       deactivateChildComponent(vm.$children[i]);
     }
+    // keep-alive 组件停用时调用。
     callHook(vm, 'deactivated');
   }
 }
-
+// 调用生命周期
 function callHook (vm, hook) {
   var handlers = vm.$options[hook];
   if (handlers) {
@@ -2954,13 +2964,14 @@ function callHook (vm, hook) {
     }
   }
   if (vm._hasHookEvent) {
+    // 调用方法应该是通过$emit来触发的。
     vm.$emit('hook:' + hook);
   }
 }
 
-/*  */
+/* 目测是讲Vue队列更新数据的 */
 
-
+// 最大更新数量
 var MAX_UPDATE_COUNT = 100;
 
 var queue = [];
@@ -2973,6 +2984,7 @@ var index = 0;
 
 /**
  * Reset the scheduler's state.
+ * 重置调度状态
  */
 function resetSchedulerState () {
   index = queue.length = activatedChildren.length = 0;
@@ -2985,6 +2997,7 @@ function resetSchedulerState () {
 
 /**
  * Flush both queues and run the watchers.
+ * 触发队列并运行Watcher
  */
 function flushSchedulerQueue () {
   flushing = true;
@@ -2998,10 +3011,12 @@ function flushSchedulerQueue () {
   //    user watchers are created before the render watcher)
   // 3. If a component is destroyed during a parent component's watcher run,
   //    its watchers can be skipped.
+  // 通过id排列
   queue.sort(function (a, b) { return a.id - b.id; });
 
   // do not cache length because more watchers might be pushed
   // as we run existing watchers
+  // 不要缓存队列长度因为更多的watcher可能在我们运行已有watcher的时候被推进队列
   for (index = 0; index < queue.length; index++) {
     watcher = queue[index];
     id = watcher.id;
