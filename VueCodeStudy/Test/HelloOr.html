@@ -10,11 +10,26 @@
     </div>
 
     <script>
-        var a = 1
-        var b = 5
-        var c = b || a
+        var a = 0
+        var b = false
+        var c = null
+        var d = undefined
+        var e = a || b || c || d
 
-        console.log(c)
+        console.log(e)
+
+        var obj = {
+          a: 'jack',
+          b: {
+            get: function () {
+              console.log('get')
+            },
+            sex: 'male'
+          }
+        }
+
+        var result = obj && obj.b && obj.b.sex
+        console.log(result)
     </script>
 </body>
 </html>

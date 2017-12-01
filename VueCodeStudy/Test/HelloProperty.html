@@ -11,23 +11,26 @@
 </div>
 
 <script>
+    var a = {
+      _food: "fish"
+    }
+
+    console.log(a)
+
     var obj = {}
     var mValue = "abc"
     Object.defineProperty(obj, "_name", {
-        configurable: false, // if true, descriptor can be modified
-        enumerable: false, // if true, this property can enum
-//        value: "aaa",
-//        writable: false, // if true, can 赋值运算
-        get: function reactiveGet() {
-            return mValue
+        configurable: false, 
+        enumerable: false, 
+        get: function reactiveGetter () {
+          return mValue
         },
-        set: function reactiveSet(val) {
-            mValue = val
+        set: function reactiveSetter (val) {
+          mValue = val
         }
     })
 
     obj._name = "rose"
-//    obj._name = "rose"
 
     console.log(obj)
 
@@ -47,7 +50,8 @@
     console.log(Vue)
     console.log(vm)
 
-
+    console.log(typeof Vue)
+    console.log(typeof new Vue())
 
     function Vue$4(options) {
         this.options = options

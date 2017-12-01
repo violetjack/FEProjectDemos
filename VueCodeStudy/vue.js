@@ -4668,6 +4668,7 @@ function dedupe (latest, extended, sealed) {
   }
 }
 
+// Vue的构造函数！我们将我们的options传入这个构造函数，然后它们执行 _init 函数。
 function Vue$3 (options) {
   if ("development" !== 'production' &&
     !(this instanceof Vue$3)
