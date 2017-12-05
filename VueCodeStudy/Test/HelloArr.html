@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Arr</title>
+</head>
+<body>
+    <div>
+        <h1>Hello Array</h1>
+    </div>
+    <script>
+        let arr = [ 1, 2, 3]
+        let arr1 = arr  // 这只是数组的引用
+        let arr2 = arr.slice() // 这就是复制arr的方式
+
+        arr.push(4)
+        arr1.push(5)
+        arr2.push(6)
+
+        console.log(arr)
+        console.log(arr1)
+        console.log(arr2)
+    </script>
+</body>
+</html>

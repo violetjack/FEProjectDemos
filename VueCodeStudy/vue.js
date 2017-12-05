@@ -3052,16 +3052,17 @@ function flushSchedulerQueue () {
   // devtool hook
   /* istanbul ignore if */
   if (devtools && config.devtools) {
-    devtools.emit('flush');
+    devtools.emit('flush'); // 开发工具的生命周期触发
   }
 }
-
+// TODO
 function callUpdatedHooks (queue) {
   var i = queue.length;
   while (i--) {
     var watcher = queue[i];
     var vm = watcher.vm;
     if (vm._watcher === watcher && vm._isMounted) {
+      // 调用那些添加到队列中的watcher的updated生命周期
       callHook(vm, 'updated');
     }
   }
