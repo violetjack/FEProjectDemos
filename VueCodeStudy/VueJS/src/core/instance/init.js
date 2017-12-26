@@ -77,7 +77,6 @@ export function initMixin (Vue: Class<Component>) {
 }
 // 初始化内部组件
 function initInternalComponent (vm: Component, options: InternalComponentOptions) {
-  // TODO 这里两个等号啥意思
   const opts = vm.$options = Object.create(vm.constructor.options)
   // 这样做是因为它比动态枚举快。
   opts.parent = options.parent
