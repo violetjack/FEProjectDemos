@@ -691,13 +691,13 @@ Dep.prototype.addSub = function addSub (sub) {
 Dep.prototype.removeSub = function removeSub (sub) {
   remove(this.subs, sub);
 };
-// 依赖订阅
+// 依赖订阅，将当前dep实例添加到watcher中
 Dep.prototype.depend = function depend () {
   if (Dep.target) {
     Dep.target.addDep(this);
   }
 };
-// 通知方法，通知界面更新，循环逐个更新订阅器
+// 通知方法，通知界面更新，循环逐个更新订阅器watcher
 Dep.prototype.notify = function notify () {
   // stabilize the subscriber list first
   var subs = this.subs.slice();
@@ -907,14 +907,15 @@ var Observer = function Observer (value) {
  * 这些方法只会在value是一个对象是调用。
  */
 Observer.prototype.walk = function walk (obj) {
-  var keys = Object.keys(obj);
+  var keys = Object.keys(obj); 
+  // 将对象中所有属性都写上setter和getter
   for (var i = 0; i < keys.length; i++) {
     defineReactive(obj, keys[i], obj[keys[i]]);
   }
 };
 
 /**
- * 观察数组列表项
+ * 观察数组列表项，重复调用observe方法
  */
 Observer.prototype.observeArray = function observeArray (items) {
   for (var i = 0, l = items.length; i < l; i++) {
@@ -1164,6 +1165,7 @@ function mergeData (to, from) {
 /**
  * Data
  * 合并Data或者方法
+ * 在初始化的时候使用。
  */
 function mergeDataOrFn (
   parentVal,
@@ -3428,7 +3430,7 @@ function initProps (vm, propsOptions) {
   observerState.shouldConvert = true;
 }
 
-// 初始化Data
+// 初始化Data 双向绑定入口
 function initData (vm) {
   var data = vm.$options.data;
   data = vm._data = typeof data === 'function'
@@ -3451,6 +3453,7 @@ function initData (vm) {
   var i = keys.length;
   while (i--) {
     var key = keys[i];
+    // data名不能和methods、props命名相同。
     {
       if (methods && hasOwn(methods, key)) {
         warn(
@@ -3466,11 +3469,11 @@ function initData (vm) {
         vm
       );
     } else if (!isReserved(key)) {
-      // 将data定义到vm对象的_data字段的中去
+      // 遍历 data 的 key，把 data 上的属性代理到 vm 实例上
       proxy(vm, "_data", key);
     }
   }
-  // observe data 观察目标对象
+  // observe data 观察目标对象 
   observe(data, true /* asRootData */);
 }
 
@@ -9070,7 +9073,7 @@ function parse (
   var inVPre = false;
   var inPre = false;
   var warned = false;
-
+  // 警报一次
   function warnOnce (msg) {
     if (!warned) {
       warned = true;
@@ -9087,7 +9090,7 @@ function parse (
       inPre = false;
     }
   }
-  // 解析HTML
+  // 解析HTML,解析的关键代码
   parseHTML(template, {
     warn: warn$2,
     expectHTML: options.expectHTML,
@@ -9751,7 +9754,6 @@ var directives$1 = {
 
 /*  */
 // 基础配置
-// TODO
 var baseOptions = {
   expectHTML: true,
   modules: modules$1,
@@ -9783,6 +9785,7 @@ var genStaticKeysCached = cached(genStaticKeys$1);
  *    create fresh nodes for them on each re-render;
  * 2. Completely skip them in the patching process.
  */
+// optimize 优化 确保一些不需要重复渲染的静态页面不会被重复渲染
 function optimize (root, options) {
   if (!root) { return }
   isStaticKey = genStaticKeysCached(options.staticKeys || '');
@@ -9832,6 +9835,7 @@ function markStatic$1 (node) {
   }
 }
 
+// 标记静态根
 function markStaticRoots (node, isInFor) {
   if (node.type === 1) {
     if (node.static || node.once) {
@@ -9861,7 +9865,7 @@ function markStaticRoots (node, isInFor) {
     }
   }
 }
-
+// 是否为静态
 function isStatic (node) {
   if (node.type === 2) { // expression
     return false
@@ -9878,7 +9882,7 @@ function isStatic (node) {
     Object.keys(node).every(isStaticKey)
   ))
 }
-
+// direct 直接的
 function isDirectChildOfTemplateFor (node) {
   while (node.parent) {
     node = node.parent;
@@ -9897,7 +9901,7 @@ function isDirectChildOfTemplateFor (node) {
 var fnExpRE = /^\s*([\w$_]+|\([^)]*?\))\s*=>|^function\s*\(/;
 var simplePathRE = /^\s*[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\['.*?']|\[".*?"]|\[\d+]|\[[A-Za-z_$][\w$]*])*\s*$/;
 
-// keyCode aliases
+// keyCode aliases 键盘别名
 var keyCodes = {
   esc: 27,
   tab: 9,
@@ -9914,7 +9918,7 @@ var keyCodes = {
 // need to explicitly return null so that we can determine whether to remove
 // the listener for .once
 var genGuard = function (condition) { return ("if(" + condition + ")return null;"); };
-
+// 修改器代码
 var modifierCode = {
   stop: '$event.stopPropagation();',
   prevent: '$event.preventDefault();',
@@ -9940,6 +9944,7 @@ function genHandlers (
   return res.slice(0, -1) + '}'
 }
 
+// 事件处理
 function genHandler (
   name,
   handler
@@ -9997,7 +10002,8 @@ function genHandler (
     return ("function($event){" + code + handlerCode + "}")
   }
 }
-
+// map() 方法创建一个新数组，其结果是该数组中的每个元素都调用一个提供的函数后返回的结果。
+// join() 方法将数组（或一个类数组对象）的所有元素连接到一个字符串中。
 function genKeyFilter (keys) {
   return ("if(!('button' in $event)&&" + (keys.map(genFilterCode).join('&&')) + ")return null;")
 }
@@ -10016,7 +10022,7 @@ function genFilterCode (key) {
   )
 }
 
-/*  */
+/* 这里讲的都是事件 */
 
 function on (el, dir) {
   if ("development" !== 'production' && dir.modifiers) {
@@ -10026,7 +10032,7 @@ function on (el, dir) {
 }
 
 /*  */
-
+// 绑定事件
 function bind$1 (el, dir) {
   el.wrapData = function (code) {
     return ("_b(" + code + ",'" + (el.tag) + "'," + (dir.value) + "," + (dir.modifiers && dir.modifiers.prop ? 'true' : 'false') + (dir.modifiers && dir.modifiers.sync ? ',true' : '') + ")")
@@ -10034,7 +10040,7 @@ function bind$1 (el, dir) {
 }
 
 /*  */
-
+// 基本的事件指令
 var baseDirectives = {
   on: on,
   bind: bind$1,
@@ -10056,7 +10062,7 @@ var CodegenState = function CodegenState (options) {
 };
 
 
-
+// generate 形成
 function generate (
   ast,
   options
@@ -10068,7 +10074,7 @@ function generate (
     staticRenderFns: state.staticRenderFns
   }
 }
-
+// 元素指令 v-once v-for等等
 function genElement (el, state) {
   if (el.staticRoot && !el.staticProcessed) {
     return genStatic(el, state)
@@ -10306,7 +10312,7 @@ function genDirectives (el, state) {
     return res.slice(0, -1) + ']'
   }
 }
-
+// 内联template
 function genInlineTemplate (el, state) {
   var ast = el.children[0];
   if ("development" !== 'production' && (
@@ -10319,7 +10325,7 @@ function genInlineTemplate (el, state) {
     return ("inlineTemplate:{render:function(){" + (inlineRenderFns.render) + "},staticRenderFns:[" + (inlineRenderFns.staticRenderFns.map(function (code) { return ("function(){" + code + "}"); }).join(',')) + "]}")
   }
 }
-
+// 内部slot
 function genScopedSlots (
   slots,
   state
@@ -10414,7 +10420,7 @@ function getNormalizationType (
   }
   return res
 }
-
+// 需要标准化
 function needsNormalization (el) {
   return el.for !== undefined || el.tag === 'template' || el.tag === 'slot'
 }
@@ -10477,16 +10483,19 @@ function genProps (props) {
 }
 
 // #3895, #4268
+// 转译特殊字符
 function transformSpecialNewlines (text) {
   return text
     .replace(/\u2028/g, '\\u2028')
     .replace(/\u2029/g, '\\u2029')
 }
 
-/*  */
+// 结束了各类gen……返回的都是各类字符串。
 
+/* 检查代码 */
 // these keywords should not appear inside expressions, but operators like
 // typeof, instanceof and in are allowed
+// 这些关键字不能出现在表达式中，但是像typeof、instanceof和in可以出现
 var prohibitedKeywordRE = new RegExp('\\b' + (
   'do,if,for,let,new,try,var,case,else,with,await,break,catch,class,const,' +
   'super,throw,while,yield,delete,export,import,return,switch,default,' +
@@ -10502,6 +10511,7 @@ var unaryOperatorsRE = new RegExp('\\b' + (
 var stripStringRE = /'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*"|`(?:[^`\\]|\\.)*\$\{|\}(?:[^`\\]|\\.)*`|`(?:[^`\\]|\\.)*`/g;
 
 // detect problematic expressions in a template
+// 探查错误
 function detectErrors (ast) {
   var errors = [];
   if (ast) {
@@ -10659,7 +10669,9 @@ function createCompileToFunctionFn (compile) {
     // turn code into functions
     var res = {};
     var fnGenErrors = [];
+    // 这里把文本内容转为方法
     res.render = createFunction(compiled.render, fnGenErrors);
+    console.log(res.render)
     res.staticRenderFns = compiled.staticRenderFns.map(function (code) {
       return createFunction(code, fnGenErrors)
     });
@@ -10688,7 +10700,7 @@ function createCompileToFunctionFn (compile) {
 }
 
 /*  */
-
+// 创建编译器创建者
 function createCompilerCreator (baseCompile) {
   return function createCompiler (baseOptions) {
     function compile (
@@ -10766,6 +10778,7 @@ var compileToFunctions = ref$1.compileToFunctions;
 /*  */
 
 // check whether current browser encodes a char inside attribute values
+// 检查当前浏览器是否在属性值中编码一个char
 var div;
 function getShouldDecode (href) {
   div = div || document.createElement('div');
@@ -10779,12 +10792,12 @@ var shouldDecodeNewlines = inBrowser ? getShouldDecode(false) : false;
 var shouldDecodeNewlinesForHref = inBrowser ? getShouldDecode(true) : false;
 
 /*  */
-
+// 通过id找template
 var idToTemplate = cached(function (id) {
   var el = query(id);
   return el && el.innerHTML
 });
-
+// mount方法
 var mount = Vue$3.prototype.$mount;
 Vue$3.prototype.$mount = function (
   el,
@@ -10856,7 +10869,8 @@ Vue$3.prototype.$mount = function (
 
 /**
  * Get outerHTML of elements, taking care
- * of SVG elements in IE as well.
+ * of SVG elements in IE as well. 
+ * 获取外部HTML元素，最好注意SVG元素在IE中
  */
 function getOuterHTML (el) {
   if (el.outerHTML) {
@@ -10867,7 +10881,7 @@ function getOuterHTML (el) {
     return container.innerHTML
   }
 }
-
+// 编译
 Vue$3.compile = compileToFunctions;
 
 return Vue$3;

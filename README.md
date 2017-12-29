@@ -10,5 +10,6 @@
 * [Vue.js学习系列四 —— Webpack打包工具的使用](http://www.jianshu.com/p/aef34acd111f)
 * [Vue.js学习系列五 —— 从VUE-CLI来聊聊ESLint](http://www.jianshu.com/p/efb6fbed6fac)
 * [Vue.js学习系列六 —— Vue单元测试Karma+Mocha学习笔记](http://www.jianshu.com/p/073d25a3bba0)
+* [Vue源码学习笔记](https://www.jianshu.com/p/67bc7ae92e4a)
 
 之后还会持续更新本项目，欢迎star关注我哦~
