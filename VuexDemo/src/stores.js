@@ -17,7 +17,7 @@ export default {
   },
   // actions用于处理异步事件，最后还是需要提交mutations来改变state
   actions: {
-    // 这里使用content来提交mutations
+    // 这里使用context来提交mutations
     increment (context) {
       context.commit('increment')
     },
