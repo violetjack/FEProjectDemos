@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Hello World</h1>
+    <mt-header title="默认标题"></mt-header>
     <nuxt/>
   </div>
 </template>

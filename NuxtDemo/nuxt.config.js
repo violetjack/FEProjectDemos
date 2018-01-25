@@ -36,6 +36,15 @@ module.exports = {
     },
     vendor: ['mint-ui']
   },
+  /*
+  ** Router config
+  */
+  router: {
+    middleware: 'auth'
+  },
+  css: [
+    '~/assets/font-awesome/css/font-awesome.min.css'
+  ],
   plugins: [
     '~plugins/mint-ui'
   ]

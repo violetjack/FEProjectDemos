@@ -1,6 +1,5 @@
 <template>
   <div>
-    <mt-header fixed title="固定在顶部"></mt-header>
     <mt-navbar v-model="selected">
         <mt-tab-item id="1">选项一</mt-tab-item>
         <mt-tab-item id="2">选项二</mt-tab-item>
@@ -32,7 +31,7 @@
 // 也就是说，在js中导入的目录还是一样滴。别名这玩意是给HTML用的。
 import { Toast } from 'mint-ui'
 import avatar from '~/components/Avatar'
-import '~/assets/font-awesome/css/font-awesome.min.css'
+// import '~/assets/font-awesome/css/font-awesome.min.css'
 
 export default {
     data() {
@@ -47,7 +46,8 @@ export default {
     },
     components: {
         avatar
-    }
+    },
+    layout: 'page'
 };
 </script>
 
