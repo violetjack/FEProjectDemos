@@ -40,7 +40,7 @@ module.exports = {
   ** Router config
   */
   router: {
-    middleware: 'auth'
+    middleware: 'add'
   },
   css: [
     '~/assets/font-awesome/css/font-awesome.min.css'
