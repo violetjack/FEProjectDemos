@@ -1,6 +1,6 @@
-# nuxts
+# nuxt demo
 
-> Nuxt.js project
+> 本项目为nuxt demo项目，演示了nuxt的简单使用方法。
 
 ## Build Setup
 
@@ -19,4 +19,6 @@ $ npm start
 $ npm run generate
 ```
 
-For detailed explanation on how things work, checkout the [Nuxt.js docs](https://github.com/nuxt/nuxt.js).
+## 文章地址
+
+[Vue.js学习系列七 —— Vue服务器渲染Nuxt学习](https://www.jianshu.com/p/ba7466d7101a)
