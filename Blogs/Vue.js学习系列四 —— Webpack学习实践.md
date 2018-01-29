@@ -366,15 +366,22 @@ http://blog.guowenfh.com/2016/03/24/vue-webpack-01-base/
 鉴于前端知识碎片化严重，我希望能够系统化的整理出一套关于Vue的学习系列博客。
 
 [Vue.js学习系列一 —— vue-router2学习实践笔记（附DEMO）](http://www.jianshu.com/p/8013d8d37bd0)
-[Vue.js学习系列二 —— vuex学习实践笔记（附DEMO）](http://www.jianshu.com/p/d6f7e11f18af)
-[Vue.js学习系列三——axios和网络传输相关知识的学习实践](http://www.jianshu.com/p/8e5fb763c3d7)
-[Vue.js学习系列四——Webpack打包工具的使用](http://www.jianshu.com/p/aef34acd111f)
-[Vue.js学习系列五 —— 从VUE-CLI来聊聊ESLint](http://www.jianshu.com/p/efb6fbed6fac)
-[Vue.js学习系列六——Vue单元测试Karma+Mocha学习笔记](http://www.jianshu.com/p/073d25a3bba0)
-[Vue.js学习系列七——Vue服务器渲染Nuxt学习](https://www.jianshu.com/p/ba7466d7101a)
 
-#Vue.js学习系列项目地址
+[Vue.js学习系列二 —— vuex学习实践笔记（附DEMO）](http://www.jianshu.com/p/d6f7e11f18af)
+
+[Vue.js学习系列三 —— axios和网络传输相关知识的学习实践](http://www.jianshu.com/p/8e5fb763c3d7)
+
+[Vue.js学习系列四 —— Webpack打包工具的使用](http://www.jianshu.com/p/aef34acd111f)
+
+[Vue.js学习系列五 —— 从VUE-CLI来聊聊ESLint](http://www.jianshu.com/p/efb6fbed6fac)
+
+[Vue.js学习系列六 —— Vue单元测试Karma+Mocha学习笔记](http://www.jianshu.com/p/073d25a3bba0)
+
+[Vue.js学习系列七 —— Vue服务器渲染Nuxt学习](https://www.jianshu.com/p/ba7466d7101a)
+
+# Vue.js学习系列项目地址
 本文源码已收入到GitHub中，以供参考，当然能留下一个star更好啦^-^。
+
 [https://github.com/violetjack/VueStudyDemos](https://github.com/violetjack/VueStudyDemos)
 
 # 关于作者
@@ -382,7 +389,11 @@ VioletJack，高效学习前端工程师，喜欢研究提高效率的方法，�
 欢迎关注、点赞、评论留言~我将持续产出Vue相关优质内容。
 
 新浪微博： http://weibo.com/u/2640909603
+
 掘金：https://gold.xitu.io/user/571d953d39b0570068145cd1
+
 CSDN: http://blog.csdn.net/violetjack0808
+
 简书： http://www.jianshu.com/users/54ae4af3a98d/latest_articles
+
 Github： https://github.com/violetjack
