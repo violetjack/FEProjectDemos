@@ -1,14 +1,14 @@
 /* @flow */
 
 import { ASSET_TYPES } from 'shared/constants'
-import { warn, extend, mergeOptions } from '../util/index'
 import { defineComputed, proxy } from '../instance/state'
+import { extend, mergeOptions, validateComponentName } from '../util/index'
 
-// 继承方法：
 export function initExtend (Vue: GlobalAPI) {
   /**
-   * 每个实例构造函数，包括Vue，都有一个惟一的cid。
-   * 这使我们能够为原型继承创建包装的“子构造函数”并缓存它们。
+   * Each instance constructor, including Vue, has a unique
+   * cid. This enables us to create wrapped "child
+   * constructors" for prototypal inheritance and cache them.
    */
   Vue.cid = 0
   let cid = 1
@@ -24,26 +24,18 @@ export function initExtend (Vue: GlobalAPI) {
     if (cachedCtors[SuperId]) {
       return cachedCtors[SuperId]
     }
-    // 判断组件名称，发出警报信息。
+
     const name = extendOptions.name || Super.options.name
-    if (process.env.NODE_ENV !== 'production') {
-      if (!/^[a-zA-Z][\w-]*$/.test(name)) {
-        warn(
-          'Invalid component name: "' + name + '". Component names ' +
-          'can only contain alphanumeric characters and the hyphen, ' +
-          'and must start with a letter.'
-        )
-      }
+    if (process.env.NODE_ENV !== 'production' && name) {
+      validateComponentName(name)
     }
-    // 新建一个Vue初始化函数
+
     const Sub = function VueComponent (options) {
       this._init(options)
     }
-    // 添加Vue各属性，将父级属性传递下来。
     Sub.prototype = Object.create(Super.prototype)
     Sub.prototype.constructor = Sub
     Sub.cid = cid++
-    // 合并配置
     Sub.options = mergeOptions(
       Super.options,
       extendOptions
@@ -82,10 +74,9 @@ export function initExtend (Vue: GlobalAPI) {
     Sub.extendOptions = extendOptions
     Sub.sealedOptions = extend({}, Sub.options)
 
-    // 缓存这个构造函数
+    // cache constructor
     cachedCtors[SuperId] = Sub
     return Sub
-    // 返回了一个合并的Vue init函数
   }
 }
 

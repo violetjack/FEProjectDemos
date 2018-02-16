@@ -1,6 +1,5 @@
 /* @flow */
 
-// 生命周期 https://cn.vuejs.org/v2/guide/instance.html#实例生命周期
 import config from '../config'
 import Watcher from '../observer/watcher'
 import { mark, measure } from '../util/perf'
@@ -47,24 +46,19 @@ export function initLifecycle (vm: Component) {
   vm._isBeingDestroyed = false
 }
 
-// 混合生命周期
 export function lifecycleMixin (Vue: Class<Component>) {
   Vue.prototype._update = function (vnode: VNode, hydrating?: boolean) {
     const vm: Component = this
-    // 如果是已经挂载的，就触发beforeUpdate方法。
     if (vm._isMounted) {
       callHook(vm, 'beforeUpdate')
     }
-    // 之前的对象
     const prevEl = vm.$el
     const prevVnode = vm._vnode
     const prevActiveInstance = activeInstance
-    // 活动实例
     activeInstance = vm
     vm._vnode = vnode
     // Vue.prototype.__patch__ is injected in entry points
     // based on the rendering backend used.
-    // __patch__ 补丁方法是注入基于后端渲染的的入口点
     if (!prevVnode) {
       // initial render
       vm.$el = vm.__patch__(
@@ -94,14 +88,14 @@ export function lifecycleMixin (Vue: Class<Component>) {
     // updated hook is called by the scheduler to ensure that children are
     // updated in a parent's updated hook.
   }
-  // 强制更新方法
+
   Vue.prototype.$forceUpdate = function () {
     const vm: Component = this
     if (vm._watcher) {
       vm._watcher.update()
     }
   }
-  // 销毁方法
+
   Vue.prototype.$destroy = function () {
     const vm: Component = this
     if (vm._isBeingDestroyed) {
@@ -139,9 +133,13 @@ export function lifecycleMixin (Vue: Class<Component>) {
     if (vm.$el) {
       vm.$el.__vue__ = null
     }
+    // release circular reference (#6759)
+    if (vm.$vnode) {
+      vm.$vnode.parent = null
+    }
   }
 }
-// 挂载组件的方法
+
 export function mountComponent (
   vm: Component,
   el: ?Element,
@@ -182,12 +180,12 @@ export function mountComponent (
       mark(startTag)
       const vnode = vm._render()
       mark(endTag)
-      measure(`${name} render`, startTag, endTag)
+      measure(`vue ${name} render`, startTag, endTag)
 
       mark(startTag)
       vm._update(vnode, hydrating)
       mark(endTag)
-      measure(`${name} patch`, startTag, endTag)
+      measure(`vue ${name} patch`, startTag, endTag)
     }
   } else {
     updateComponent = () => {
@@ -195,7 +193,10 @@ export function mountComponent (
     }
   }
 
-  vm._watcher = new Watcher(vm, updateComponent, noop)
+  // we set this to vm._watcher inside the watcher's constructor
+  // since the watcher's initial patch may call $forceUpdate (e.g. inside child
+  // component's mounted hook), which relies on vm._watcher being already defined
+  new Watcher(vm, updateComponent, noop, null, true /* isRenderWatcher */)
   hydrating = false
 
   // manually mounted instance, call mounted on self
@@ -211,7 +212,7 @@ export function updateChildComponent (
   vm: Component,
   propsData: ?Object,
   listeners: ?Object,
-  parentVnode: VNode,
+  parentVnode: MountedComponentVNode,
   renderChildren: ?Array<VNode>
 ) {
   if (process.env.NODE_ENV !== 'production') {
@@ -235,11 +236,11 @@ export function updateChildComponent (
   }
   vm.$options._renderChildren = renderChildren
 
-  // update $attrs and $listensers hash
+  // update $attrs and $listeners hash
   // these are also reactive so they may trigger child update if the child
   // used them during render
-  vm.$attrs = parentVnode.data && parentVnode.data.attrs
-  vm.$listeners = listeners
+  vm.$attrs = parentVnode.data.attrs || emptyObject
+  vm.$listeners = listeners || emptyObject
 
   // update props
   if (propsData && vm.$options.props) {
@@ -256,11 +257,11 @@ export function updateChildComponent (
   }
 
   // update listeners
-  if (listeners) {
-    const oldListeners = vm.$options._parentListeners
-    vm.$options._parentListeners = listeners
-    updateComponentListeners(vm, listeners, oldListeners)
-  }
+  listeners = listeners || emptyObject
+  const oldListeners = vm.$options._parentListeners
+  vm.$options._parentListeners = listeners
+  updateComponentListeners(vm, listeners, oldListeners)
+
   // resolve slots + force update if has children
   if (hasChildren) {
     vm.$slots = resolveSlots(renderChildren, parentVnode.context)

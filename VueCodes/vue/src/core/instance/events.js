@@ -1,6 +1,5 @@
 /* @flow */
 
-// https://cn.vuejs.org/v2/api/#实例方法-事件
 import {
   tip,
   toArray,
@@ -20,7 +19,7 @@ export function initEvents (vm: Component) {
   }
 }
 
-let target: Component
+let target: any
 
 function add (event, fn, once) {
   if (once) {
@@ -41,6 +40,7 @@ export function updateComponentListeners (
 ) {
   target = vm
   updateListeners(listeners, oldListeners || {}, add, remove, vm)
+  target = undefined
 }
 
 export function eventsMixin (Vue: Class<Component>) {
@@ -66,7 +66,7 @@ export function eventsMixin (Vue: Class<Component>) {
     const vm: Component = this
     function on () {
       vm.$off(event, on)
-      fn.apply(vm, arguments) // 学习以下JS中的apply和call方法
+      fn.apply(vm, arguments)
     }
     on.fn = fn
     vm.$on(event, on)
@@ -75,35 +75,37 @@ export function eventsMixin (Vue: Class<Component>) {
 
   Vue.prototype.$off = function (event?: string | Array<string>, fn?: Function): Component {
     const vm: Component = this
-    // all 如果不传参，全部事件都off掉
+    // all
     if (!arguments.length) {
       vm._events = Object.create(null)
       return vm
     }
-    // array of events 事件数组
+    // array of events
     if (Array.isArray(event)) {
       for (let i = 0, l = event.length; i < l; i++) {
         this.$off(event[i], fn)
       }
       return vm
     }
-    // specific event 具体事件
+    // specific event
     const cbs = vm._events[event]
     if (!cbs) {
       return vm
     }
-    if (arguments.length === 1) {
+    if (!fn) {
       vm._events[event] = null
       return vm
     }
-    // specific handler
-    let cb
-    let i = cbs.length
-    while (i--) {
-      cb = cbs[i]
-      if (cb === fn || cb.fn === fn) {
-        cbs.splice(i, 1)
-        break
+    if (fn) {
+      // specific handler
+      let cb
+      let i = cbs.length
+      while (i--) {
+        cb = cbs[i]
+        if (cb === fn || cb.fn === fn) {
+          cbs.splice(i, 1)
+          break
+        }
       }
     }
     return vm
@@ -112,7 +114,7 @@ export function eventsMixin (Vue: Class<Component>) {
   Vue.prototype.$emit = function (event: string): Component {
     const vm: Component = this
     if (process.env.NODE_ENV !== 'production') {
-      const lowerCaseEvent = event.toLowerCase() // toLowerCase方法用于把字符串转换为小写
+      const lowerCaseEvent = event.toLowerCase()
       if (lowerCaseEvent !== event && vm._events[lowerCaseEvent]) {
         tip(
           `Event "${lowerCaseEvent}" is emitted in component ` +
@@ -129,7 +131,7 @@ export function eventsMixin (Vue: Class<Component>) {
       const args = toArray(arguments, 1)
       for (let i = 0, l = cbs.length; i < l; i++) {
         try {
-          cbs[i].apply(vm, args) // 通过 event.apply来触发事件
+          cbs[i].apply(vm, args)
         } catch (e) {
           handleError(e, vm, `event handler for "${event}"`)
         }

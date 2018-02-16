@@ -1,17 +1,13 @@
 /* @flow */
 
-// 调用util中的方法
 import {
   no,
   noop,
   identity
 } from 'shared/util'
 
-// 调用生命周期常量
 import { LIFECYCLE_HOOKS } from 'shared/constants'
 
-// 定义对象数据类型
-// https://cn.vuejs.org/v2/api/#全局配置
 export type Config = {
   // user
   optionMergeStrategies: { [key: string]: Function };
@@ -21,7 +17,7 @@ export type Config = {
   devtools: boolean;
   errorHandler: ?(err: Error, vm: Component, info: string) => void;
   warnHandler: ?(msg: string, vm: Component, trace: string) => void;
-  ignoredElements: Array<string>;
+  ignoredElements: Array<string | RegExp>;
   keyCodes: { [key: string]: number | Array<number> };
 
   // platform
@@ -36,11 +32,11 @@ export type Config = {
   _lifecycleHooks: Array<string>;
 };
 
-// 导出Config类型的配置文件。
 export default ({
   /**
    * Option merge strategies (used in core/util/options)
    */
+  // $flow-disable-line
   optionMergeStrategies: Object.create(null),
 
   /**
@@ -81,6 +77,7 @@ export default ({
   /**
    * Custom user key aliases for v-on
    */
+  // $flow-disable-line
   keyCodes: Object.create(null),
 
   /**

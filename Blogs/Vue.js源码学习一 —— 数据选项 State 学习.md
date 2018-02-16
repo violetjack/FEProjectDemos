@@ -436,18 +436,8 @@ export function bind (fn: Function, ctx: Object): Function {
 至此，Vue中的几个数据选项都学习了一遍了。关键在于理解mvvm的过程。data 理解之后，props、watch、computed 都好理解了。methods 和 mvvm 无关……
 通过四个早上的时间把文章写出来了~对 Vue 的理解深刻了一些，但是还是能感觉到有很多未知的知识点等着我去发掘。加油吧！今年专注于 Vue 前端学习，把 Vue 给弄懂！
 
-
 # Vue.js学习系列
 鉴于前端知识碎片化严重，我希望能够系统化的整理出一套关于Vue的学习系列博客。
-
-[Vue.js学习系列一 —— vue-router2学习实践笔记（附DEMO）](http://www.jianshu.com/p/8013d8d37bd0)
-[Vue.js学习系列二 —— vuex学习实践笔记（附DEMO）](http://www.jianshu.com/p/d6f7e11f18af)
-[Vue.js学习系列三 —— axios和网络传输相关知识的学习实践](http://www.jianshu.com/p/8e5fb763c3d7)
-[Vue.js学习系列四 —— Webpack打包工具的使用](http://www.jianshu.com/p/aef34acd111f)
-[Vue.js学习系列五 —— 从VUE-CLI来聊聊ESLint](http://www.jianshu.com/p/efb6fbed6fac)
-[Vue.js学习系列六 —— Vue单元测试Karma+Mocha学习笔记](http://www.jianshu.com/p/073d25a3bba0)
-[Vue.js学习系列七 —— Vue服务器渲染Nuxt学习](https://www.jianshu.com/p/ba7466d7101a)
-[Vue.js学习系列八 —— Vue源码学习之State学习](https://www.jianshu.com/p/15028f91226e)
 
 # Vue.js学习系列项目地址
 本文源码已收入到GitHub中，以供参考，当然能留下一个star更好啦^-^。

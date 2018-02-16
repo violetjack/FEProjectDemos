@@ -1,25 +1,23 @@
 /* @flow */
-// props工具
-// https://cn.vuejs.org/v2/guide/components.html#Prop
+
 import { warn } from './debug'
 import { observe, observerState } from '../observer/index'
 import {
   hasOwn,
   isObject,
+  toRawType,
   hyphenate,
   capitalize,
   isPlainObject
 } from 'shared/util'
 
-// 定义类型
 type PropOptions = {
-  type: Function | Array<Function> | null,  // 类型
-  default: any,       // 默认
-  required: ?boolean, // 是否必填
-  validator: ?Function  // 验证函数
+  type: Function | Array<Function> | null,
+  default: any,
+  required: ?boolean,
+  validator: ?Function
 };
 
-// 验证prop
 export function validateProp (
   key: string,
   propOptions: Object,
@@ -30,8 +28,8 @@ export function validateProp (
   const absent = !hasOwn(propsData, key)
   let value = propsData[key]
   // handle boolean props
-  if (isType(Boolean, prop.type)) { // 类型对
-    if (absent && !hasOwn(prop, 'default')) { // 无数据、无默认
+  if (isType(Boolean, prop.type)) {
+    if (absent && !hasOwn(prop, 'default')) {
       value = false
     } else if (!isType(String, prop.type) && (value === '' || value === hyphenate(key))) {
       value = true
@@ -47,7 +45,11 @@ export function validateProp (
     observe(value)
     observerState.shouldConvert = prevShouldConvert
   }
-  if (process.env.NODE_ENV !== 'production') {
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    // skip validation for weex recycle-list child component props
+    !(__WEEX__ && isObject(value) && ('@binding' in value))
+  ) {
     assertProp(prop, key, value, vm, absent)
   }
   return value
@@ -55,16 +57,14 @@ export function validateProp (
 
 /**
  * Get the default value of a prop.
- * 
- * 获取prop的默认值
  */
 function getPropDefaultValue (vm: ?Component, prop: PropOptions, key: string): any {
-  // no default, return undefined 是否有default这个key
+  // no default, return undefined
   if (!hasOwn(prop, 'default')) {
     return undefined
   }
   const def = prop.default
-  // warn against non-factory defaults for Object & Array 如果prop传的是 Object 或者 Array 发出警告。
+  // warn against non-factory defaults for Object & Array
   if (process.env.NODE_ENV !== 'production' && isObject(def)) {
     warn(
       'Invalid default value for prop "' + key + '": ' +
@@ -75,7 +75,6 @@ function getPropDefaultValue (vm: ?Component, prop: PropOptions, key: string): a
   }
   // the raw prop value was also undefined from previous render,
   // return previous default value to avoid unnecessary watcher trigger
-  // 原始的支撑值也没有定义，返回之前的默认值，以避免不必要的观察者触发器。
   if (vm && vm.$options.propsData &&
     vm.$options.propsData[key] === undefined &&
     vm._props[key] !== undefined
@@ -84,7 +83,6 @@ function getPropDefaultValue (vm: ?Component, prop: PropOptions, key: string): a
   }
   // call factory function for non-Function types
   // a value is Function if its prototype is function even across different execution context
-  // 为非函数类型调用工厂函数一个值是函数如果它的原型在不同的执行上下文中是函数
   return typeof def === 'function' && getType(prop.type) !== 'Function'
     ? def.call(vm)
     : def
@@ -92,8 +90,6 @@ function getPropDefaultValue (vm: ?Component, prop: PropOptions, key: string): a
 
 /**
  * Assert whether a prop is valid.
- * 
- * 断言prop是否有效
  */
 function assertProp (
   prop: PropOptions,
@@ -127,9 +123,9 @@ function assertProp (
   }
   if (!valid) {
     warn(
-      'Invalid prop: type check failed for prop "' + name + '".' +
-      ' Expected ' + expectedTypes.map(capitalize).join(', ') +
-      ', got ' + Object.prototype.toString.call(value).slice(8, -1) + '.',
+      `Invalid prop: type check failed for prop "${name}".` +
+      ` Expected ${expectedTypes.map(capitalize).join(', ')}` +
+      `, got ${toRawType(value)}.`,
       vm
     )
     return
@@ -147,7 +143,6 @@ function assertProp (
 
 const simpleCheckRE = /^(String|Number|Boolean|Function|Symbol)$/
 
-// 断言类型
 function assertType (value: any, type: Function): {
   valid: boolean;
   expectedType: string;
@@ -155,7 +150,12 @@ function assertType (value: any, type: Function): {
   let valid
   const expectedType = getType(type)
   if (simpleCheckRE.test(expectedType)) {
-    valid = typeof value === expectedType.toLowerCase()
+    const t = typeof value
+    valid = t === expectedType.toLowerCase()
+    // for primitive wrapper objects
+    if (!valid && t === 'object') {
+      valid = value instanceof type
+    }
   } else if (expectedType === 'Object') {
     valid = isPlainObject(value)
   } else if (expectedType === 'Array') {
@@ -170,7 +170,6 @@ function assertType (value: any, type: Function): {
 }
 
 /**
- * 使用方法字符串名来判断 built-in 类型，因为当在不同的vm/iframe上运行时，一个简单的等号检查将会失败。
  * Use function string name to check built-in types,
  * because a simple equality check will fail when running
  * across different vms / iframes.
@@ -180,7 +179,6 @@ function getType (fn) {
   return match ? match[1] : ''
 }
 
-// 类型判断
 function isType (type, fn) {
   if (!Array.isArray(fn)) {
     return getType(fn) === getType(type)

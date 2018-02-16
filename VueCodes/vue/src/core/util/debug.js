@@ -1,11 +1,12 @@
 /* @flow */
-// 调试工具
+
 import config from '../config'
 import { noop } from 'shared/util'
 
 export let warn = noop
 export let tip = noop
-export let formatComponentName: Function = (null: any) // work around flow check
+export let generateComponentTrace = (noop: any) // work around flow check
+export let formatComponentName = (noop: any)
 
 if (process.env.NODE_ENV !== 'production') {
   const hasConsole = typeof console !== 'undefined'
@@ -14,7 +15,6 @@ if (process.env.NODE_ENV !== 'production') {
     .replace(classifyRE, c => c.toUpperCase())
     .replace(/[-_]/g, '')
 
-    // 警告
   warn = (msg, vm) => {
     const trace = vm ? generateComponentTrace(vm) : ''
 
@@ -25,7 +25,6 @@ if (process.env.NODE_ENV !== 'production') {
     }
   }
 
-  // tip
   tip = (msg, vm) => {
     if (hasConsole && (!config.silent)) {
       console.warn(`[Vue tip]: ${msg}` + (
@@ -34,21 +33,17 @@ if (process.env.NODE_ENV !== 'production') {
     }
   }
 
-  // 格式化容器名称
   formatComponentName = (vm, includeFile) => {
-    // $root 当前组件树的根 Vue 实例。如果当前实例没有父实例，此实例将会是其自己。
     if (vm.$root === vm) {
       return '<Root>'
     }
-    let name = typeof vm === 'string'
-      ? vm
-      : typeof vm === 'function' && vm.options
-        ? vm.options.name
-        : vm._isVue
-          ? vm.$options.name || vm.$options._componentTag
-          : vm.name
-
-    const file = vm._isVue && vm.$options.__file
+    const options = typeof vm === 'function' && vm.cid != null
+      ? vm.options
+      : vm._isVue
+        ? vm.$options || vm.constructor.options
+        : vm || {}
+    let name = options.name || options._componentTag
+    const file = options.__file
     if (!name && file) {
       const match = file.match(/([^/\\]+)\.vue$/)
       name = match && match[1]
@@ -70,8 +65,7 @@ if (process.env.NODE_ENV !== 'production') {
     return res
   }
 
-  // 生成组件跟踪
-  const generateComponentTrace = vm => {
+  generateComponentTrace = vm => {
     if (vm._isVue && vm.$parent) {
       const tree = []
       let currentRecursiveSequence = 0

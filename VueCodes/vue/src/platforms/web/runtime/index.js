@@ -44,11 +44,15 @@ Vue.prototype.$mount = function (
 
 // devtools global hook
 /* istanbul ignore next */
-setTimeout(() => {
+Vue.nextTick(() => {
   if (config.devtools) {
     if (devtools) {
       devtools.emit('init', Vue)
-    } else if (process.env.NODE_ENV !== 'production' && isChrome) {
+    } else if (
+      process.env.NODE_ENV !== 'production' &&
+      process.env.NODE_ENV !== 'test' &&
+      isChrome
+    ) {
       console[console.info ? 'info' : 'log'](
         'Download the Vue Devtools extension for a better development experience:\n' +
         'https://github.com/vuejs/vue-devtools'
@@ -56,6 +60,7 @@ setTimeout(() => {
     }
   }
   if (process.env.NODE_ENV !== 'production' &&
+    process.env.NODE_ENV !== 'test' &&
     config.productionTip !== false &&
     inBrowser && typeof console !== 'undefined'
   ) {

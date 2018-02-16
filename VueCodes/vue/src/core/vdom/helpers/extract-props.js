@@ -1,6 +1,5 @@
 /* @flow */
 
-// 提取prop属性
 import {
   tip,
   hasOwn,
@@ -50,7 +49,6 @@ export function extractPropsFromVNodeData (
   return res
 }
 
-// 核对属性
 function checkProp (
   res: Object,
   hash: ?Object,

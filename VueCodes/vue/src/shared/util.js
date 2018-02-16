@@ -1,23 +1,21 @@
 /* @flow */
 
+export const emptyObject = Object.freeze({})
+
 // these helpers produces better vm code in JS engines due to their
 // explicitness and function inlining
-// 是否为未定义
 export function isUndef (v: any): boolean %checks {
   return v === undefined || v === null
 }
 
-// 是否有定义
 export function isDef (v: any): boolean %checks {
   return v !== undefined && v !== null
 }
 
-// 是否为true
 export function isTrue (v: any): boolean %checks {
   return v === true
 }
 
-// 是否为false
 export function isFalse (v: any): boolean %checks {
   return v === false
 }
@@ -25,11 +23,12 @@ export function isFalse (v: any): boolean %checks {
 /**
  * Check if value is primitive
  */
-// 是否为原始数据 string、number或者boolean
 export function isPrimitive (value: any): boolean %checks {
   return (
     typeof value === 'string' ||
     typeof value === 'number' ||
+    // $flow-disable-line
+    typeof value === 'symbol' ||
     typeof value === 'boolean'
   )
 }
@@ -39,24 +38,27 @@ export function isPrimitive (value: any): boolean %checks {
  * Objects from primitive values when we know the value
  * is a JSON-compliant type.
  */
-// 是否为一个对象
 export function isObject (obj: mixed): boolean %checks {
   return obj !== null && typeof obj === 'object'
 }
 
-// 对象属性中的toString
+/**
+ * Get the raw type string of a value e.g. [object Object]
+ */
 const _toString = Object.prototype.toString
+
+export function toRawType (value: any): string {
+  return _toString.call(value).slice(8, -1)
+}
 
 /**
  * Strict object type check. Only returns true
  * for plain JavaScript objects.
  */
-// 严格对象类型检查，是纯JavaScript对象则返回true
 export function isPlainObject (obj: any): boolean {
   return _toString.call(obj) === '[object Object]'
 }
 
-// 是否为正则表达式
 export function isRegExp (v: any): boolean {
   return _toString.call(v) === '[object RegExp]'
 }
@@ -64,16 +66,14 @@ export function isRegExp (v: any): boolean {
 /**
  * Check if val is a valid array index.
  */
-// 是否为有效的数组索引
 export function isValidArrayIndex (val: any): boolean {
-  const n = parseFloat(val)
+  const n = parseFloat(String(val))
   return n >= 0 && Math.floor(n) === n && isFinite(val)
 }
 
 /**
  * Convert a value to a string that is actually rendered.
  */
-// toString转文本方法
 export function toString (val: any): string {
   return val == null
     ? ''
@@ -86,7 +86,6 @@ export function toString (val: any): string {
  * Convert a input value to a number for persistence.
  * If the conversion fails, return original string.
  */
-// 字符串转数字
 export function toNumber (val: string): number | string {
   const n = parseFloat(val)
   return isNaN(n) ? val : n
@@ -95,8 +94,6 @@ export function toNumber (val: string): number | string {
 /**
  * Make a map and return a function for checking if a key
  * is in that map.
- * 
- * 创建一个map返回一个方法确认key是否在map中
  */
 export function makeMap (
   str: string,
@@ -120,18 +117,15 @@ export const isBuiltInTag = makeMap('slot,component', true)
 /**
  * Check if a attribute is a reserved attribute.
  */
-export const isReservedAttribute = makeMap('key,ref,slot,is')
+export const isReservedAttribute = makeMap('key,ref,slot,slot-scope,is')
 
 /**
  * Remove an item from an array
- * 
- * 从一个array中移除一个项目
  */
 export function remove (arr: Array<any>, item: any): Array<any> | void {
   if (arr.length) {
     const index = arr.indexOf(item)
     if (index > -1) {
-      // Array的splice方法：向/从数组中添加/删除项目，然后返回被删除的项目。
       return arr.splice(index, 1)
     }
   }
@@ -139,8 +133,6 @@ export function remove (arr: Array<any>, item: any): Array<any> | void {
 
 /**
  * Check whether the object has the property.
- * 
- * 确认是否对象中有属性
  */
 const hasOwnProperty = Object.prototype.hasOwnProperty
 export function hasOwn (obj: Object | Array<*>, key: string): boolean {
@@ -149,8 +141,6 @@ export function hasOwn (obj: Object | Array<*>, key: string): boolean {
 
 /**
  * Create a cached version of a pure function.
- * 
- * 创建一个方法的缓存版本
  */
 export function cached<F: Function> (fn: F): F {
   const cache = Object.create(null)
@@ -170,28 +160,21 @@ export const camelize = cached((str: string): string => {
 
 /**
  * Capitalize a string.
- * 
- * 字符串首字母大写
  */
 export const capitalize = cached((str: string): string => {
-  return str.charAt(0).toUpperCase() + str.slice(1) // 字符串第一个字符转换为大写，之后照常。
+  return str.charAt(0).toUpperCase() + str.slice(1)
 })
 
 /**
  * Hyphenate a camelCase string.
  */
-const hyphenateRE = /([^-])([A-Z])/g
+const hyphenateRE = /\B([A-Z])/g
 export const hyphenate = cached((str: string): string => {
-  return str
-    .replace(hyphenateRE, '$1-$2')
-    .replace(hyphenateRE, '$1-$2')
-    .toLowerCase()
+  return str.replace(hyphenateRE, '-$1').toLowerCase()
 })
 
 /**
  * Simple bind, faster than native
- * 
- * 简单绑定，比native的快
  */
 export function bind (fn: Function, ctx: Object): Function {
   function boundFn (a) {
@@ -209,8 +192,6 @@ export function bind (fn: Function, ctx: Object): Function {
 
 /**
  * Convert an Array-like object to a real Array.
- * 
- * 转换一个类数组对象为一个真实数组
  */
 export function toArray (list: any, start?: number): Array<any> {
   start = start || 0
@@ -224,8 +205,6 @@ export function toArray (list: any, start?: number): Array<any> {
 
 /**
  * Mix properties into target object.
- * 
- * 混合属性到目标对象中
  */
 export function extend (to: Object, _from: ?Object): Object {
   for (const key in _from) {
@@ -236,8 +215,6 @@ export function extend (to: Object, _from: ?Object): Object {
 
 /**
  * Merge an Array of Objects into a single Object.
- * 
- * 合并一个对象数组为单个对象。
  */
 export function toObject (arr: Array<any>): Object {
   const res = {}
@@ -253,25 +230,21 @@ export function toObject (arr: Array<any>): Object {
  * Perform no operation.
  * Stubbing args to make Flow happy without leaving useless transpiled code
  * with ...rest (https://flow.org/blog/2017/05/07/Strict-Function-Call-Arity/)
- * 执行任何操作。在不离开无用的代码的情况下，要让流愉快。
  */
 export function noop (a?: any, b?: any, c?: any) {}
 
 /**
  * Always return false.
- * 永远返回false
  */
 export const no = (a?: any, b?: any, c?: any) => false
 
 /**
  * Return same value
- * 返回相同的值
  */
 export const identity = (_: any) => _
 
 /**
  * Generate a static keys string from compiler modules.
- * 从 compiler modules 中获取静态keys字符串
  */
 export function genStaticKeys (modules: Array<ModuleOptions>): string {
   return modules.reduce((keys, m) => {
@@ -282,7 +255,6 @@ export function genStaticKeys (modules: Array<ModuleOptions>): string {
 /**
  * Check if two values are loosely equal - that is,
  * if they are plain objects, do they have the same shape?
- * 宽松的equal
  */
 export function looseEqual (a: any, b: any): boolean {
   if (a === b) return true
@@ -317,9 +289,6 @@ export function looseEqual (a: any, b: any): boolean {
   }
 }
 
-/**
- * 宽松的IndexOf
- */
 export function looseIndexOf (arr: Array<mixed>, val: mixed): number {
   for (let i = 0; i < arr.length; i++) {
     if (looseEqual(arr[i], val)) return i
@@ -329,7 +298,6 @@ export function looseIndexOf (arr: Array<mixed>, val: mixed): number {
 
 /**
  * Ensure a function is called only once.
- * 确定方法只执行了一次
  */
 export function once (fn: Function): Function {
   let called = false

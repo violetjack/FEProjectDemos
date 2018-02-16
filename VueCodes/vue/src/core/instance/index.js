@@ -14,10 +14,10 @@ function Vue (options) {
   this._init(options)
 }
 
-initMixin(Vue)      // 初始化
-stateMixin(Vue)     // 状态
-eventsMixin(Vue)    // 事件
-lifecycleMixin(Vue) // 生命周期
-renderMixin(Vue)    // 渲染方法
+initMixin(Vue)
+stateMixin(Vue)
+eventsMixin(Vue)
+lifecycleMixin(Vue)
+renderMixin(Vue)
 
 export default Vue

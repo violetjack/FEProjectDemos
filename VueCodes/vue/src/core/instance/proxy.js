@@ -1,12 +1,11 @@
 /* not type checking this file because flow doesn't play well with Proxy */
 
 import config from 'core/config'
-import { warn, makeMap } from '../util/index'
+import { warn, makeMap, isNative } from '../util/index'
 
-let initProxy // 初始化代理
+let initProxy
 
 if (process.env.NODE_ENV !== 'production') {
-  // 全局方法？
   const allowedGlobals = makeMap(
     'Infinity,undefined,NaN,isFinite,isNaN,' +
     'parseFloat,parseInt,decodeURI,decodeURIComponent,encodeURI,encodeURIComponent,' +
@@ -14,23 +13,22 @@ if (process.env.NODE_ENV !== 'production') {
     'require' // for Webpack/Browserify
   )
 
-  // 警告内容
   const warnNonPresent = (target, key) => {
     warn(
       `Property or method "${key}" is not defined on the instance but ` +
-      `referenced during render. Make sure to declare reactive data ` +
-      `properties in the data option.`,
+      'referenced during render. Make sure that this property is reactive, ' +
+      'either in the data option, or for class-based components, by ' +
+      'initializing the property. ' +
+      'See: https://vuejs.org/v2/guide/reactivity.html#Declaring-Reactive-Properties.',
       target
     )
   }
 
-  // 是否有代理
   const hasProxy =
-    typeof Proxy !== 'undefined' &&
-    Proxy.toString().match(/native code/)
+    typeof Proxy !== 'undefined' && isNative(Proxy)
 
   if (hasProxy) {
-    const isBuiltInModifier = makeMap('stop,prevent,self,ctrl,shift,alt,meta')
+    const isBuiltInModifier = makeMap('stop,prevent,self,ctrl,shift,alt,meta,exact')
     config.keyCodes = new Proxy(config.keyCodes, {
       set (target, key, value) {
         if (isBuiltInModifier(key)) {
@@ -79,5 +77,3 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 export { initProxy }
-
-// 关键不了解这个Proxy是干什么用的。

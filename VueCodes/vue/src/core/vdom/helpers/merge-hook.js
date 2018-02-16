@@ -1,10 +1,14 @@
 /* @flow */
-// 合并周期
+
+import VNode from '../vnode'
 import { createFnInvoker } from './update-listeners'
 import { remove, isDef, isUndef, isTrue } from 'shared/util'
 
 export function mergeVNodeHook (def: Object, hookKey: string, hook: Function) {
-  let invoker // invoker 调用程序
+  if (def instanceof VNode) {
+    def = def.data.hook || (def.data.hook = {})
+  }
+  let invoker
   const oldHook = def[hookKey]
 
   function wrappedHook () {

@@ -2,24 +2,47 @@
 
 import config from '../config'
 import { warn } from './debug'
-import { inBrowser } from './env'
+import { inBrowser, inWeex } from './env'
 
-// 处理错误~
 export function handleError (err: Error, vm: any, info: string) {
+  if (vm) {
+    let cur = vm
+    while ((cur = cur.$parent)) {
+      const hooks = cur.$options.errorCaptured
+      if (hooks) {
+        for (let i = 0; i < hooks.length; i++) {
+          try {
+            const capture = hooks[i].call(cur, err, vm, info) === false
+            if (capture) return
+          } catch (e) {
+            globalHandleError(e, cur, 'errorCaptured hook')
+          }
+        }
+      }
+    }
+  }
+  globalHandleError(err, vm, info)
+}
+
+function globalHandleError (err, vm, info) {
   if (config.errorHandler) {
-    // 如果有特殊配置，直接交给config的errorHandler处理了。
-    config.errorHandler.call(null, err, vm, info)
+    try {
+      return config.errorHandler.call(null, err, vm, info)
+    } catch (e) {
+      logError(e, null, 'config.errorHandler')
+    }
+  }
+  logError(err, vm, info)
+}
+
+function logError (err, vm, info) {
+  if (process.env.NODE_ENV !== 'production') {
+    warn(`Error in ${info}: "${err.toString()}"`, vm)
+  }
+  /* istanbul ignore else */
+  if ((inBrowser || inWeex) && typeof console !== 'undefined') {
+    console.error(err)
   } else {
-    // 不是生产版本，发出警报。
-    if (process.env.NODE_ENV !== 'production') {
-      warn(`Error in ${info}: "${err.toString()}"`, vm)
-    }
-    /* istanbul ignore else */
-    if (inBrowser && typeof console !== 'undefined') {
-      // 在浏览器中直接使用 console.error
-      console.error(err)
-    } else {
-      throw err
-    }
+    throw err
   }
 }

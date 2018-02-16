@@ -4,7 +4,6 @@ import { isObject, isDef } from 'core/util/index'
 
 /**
  * Runtime helper for rendering v-for lists.
- * 渲染v-for列表
  */
 export function renderList (
   val: any,
@@ -26,7 +25,7 @@ export function renderList (
       ret[i] = render(i + 1, i)
     }
   } else if (isObject(val)) {
-    keys = Object.keys(val) // Object.keys方法获取对象的所有key数组
+    keys = Object.keys(val)
     ret = new Array(keys.length)
     for (i = 0, l = keys.length; i < l; i++) {
       key = keys[i]
