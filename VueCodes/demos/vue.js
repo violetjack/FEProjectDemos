@@ -2612,6 +2612,8 @@ function lifecycleMixin (Vue) {
     vm._vnode = vnode;
     // Vue.prototype.__patch__ is injected in entry points
     // based on the rendering backend used.
+    console.log(prevVnode)
+    console.log(vnode)
     if (!prevVnode) {
       // initial render
       vm.$el = vm.__patch__(
@@ -9081,6 +9083,7 @@ function parse (
       });
     }
   });
+  console.log(root)
   return root
 }
 

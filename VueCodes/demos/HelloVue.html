@@ -8,29 +8,19 @@
 <body>
     <div id="app">
         <span>{{ message }}</span>
+        <ul>
+            <li v-for="item of list" class="item-cls">{{ item }}</li>
+        </ul>
     </div>
 
     <script>
         new Vue({
             el: '#app',
             data: {
-                message: 'hello'
-            },
-            beforeCreate: function () {
-                console.log('beforeCreate')
-            },
-            created: function () {
-                console.log('created')
-            },
-            beforeMount: function () {
-                console.log('beforeMount')
-            },
-            mounted: function () {
-                console.log('mounted')
+                message: 'hello Vue.js',
+                list: ['jack', 'rose', 'james']
             }
         })
-
-        // new Vue 中传递的就是 options
     </script>
 </body>
 </html>

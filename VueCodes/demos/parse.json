@@ -1,0 +1,31 @@
+{
+    "解析开头字符": {
+        "attrs": [
+            [
+                " v-on:click='hey'",
+                "v-on:click",
+                "=",
+                "hey",
+                "undefined",
+                "undefined"
+            ]
+        ],
+        "end": 48,
+        "start": 23,
+        "tagName": "button",
+        "unarySlash": ""
+    },
+    "处理开头字符": {
+        "tag": "button",
+        "lowerCasedTag": "button",
+        "attrs": [
+            { 
+                "name": "v-on:click",
+                "value": "hey"
+            }
+        ]
+    },
+    "如果是文本": "options.chars",
+    "结束的时候": "options.end"
+}
+

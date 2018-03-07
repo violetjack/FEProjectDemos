@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hey</title>
+    <script src="vue.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- this is vue parse demo -->
+        <button v-on:click="hey">{{ message }}</button>
+        <span>你好！</span>
+    </div>
+
+    <script>
+        new Vue({
+            el: "#app",
+            data: {
+                message: "Hey Vue.js"
+            },
+            methods: {
+                hey() {
+                    this.message = "Hey Button"
+                }
+            }
+        })
+    </script>
+</body>
+</html>

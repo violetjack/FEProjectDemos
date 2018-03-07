@@ -26,7 +26,7 @@ export function addAttr (el: ASTElement, name: string, value: any) {
   el.plain = false
 }
 
-// add a raw attr (use this in preTransforms)
+// 添加原生属性 (use this in preTransforms)
 export function addRawAttr (el: ASTElement, name: string, value: any) {
   el.attrsMap[name] = value
   el.attrsList.push({ name, value })
@@ -44,6 +44,7 @@ export function addDirective (
   el.plain = false
 }
 
+// 添加处理事件
 export function addHandler (
   el: ASTElement,
   name: string,
@@ -67,7 +68,7 @@ export function addHandler (
 
   // check capture modifier
   if (modifiers.capture) {
-    delete modifiers.capture
+    delete modifiers.capture // 删除对象属性
     name = '!' + name // mark the event as captured
   }
   if (modifiers.once) {
@@ -140,6 +141,9 @@ export function getBindingAttr (
 // doesn't get processed by processAttrs.
 // By default it does NOT remove it from the map (attrsMap) because the map is
 // needed during codegen.
+// note: 这只是移除属性列表中的属性以至于不能被processAttrs处理。
+// 默认不会从属性 map 中移除属性，因为 map 还需要在编译期间使用
+// codegen 编译、生成
 export function getAndRemoveAttr (
   el: ASTElement,
   name: string,

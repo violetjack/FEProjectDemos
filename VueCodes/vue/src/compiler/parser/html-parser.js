@@ -16,15 +16,15 @@ import { isNonPhrasingTag } from 'web/compiler/util'
 const attribute = /^\s*([^\s"'<>\/=]+)(?:\s*(=)\s*(?:"([^"]*)"+|'([^']*)'+|([^\s"'=<>`]+)))?/
 // could use https://www.w3.org/TR/1999/REC-xml-names-19990114/#NT-QName
 // but for Vue templates we can enforce a simple charset
-const ncname = '[a-zA-Z_][\\w\\-\\.]*'
+const ncname = '[a-zA-Z_][\\w\\-\\.]*' // a-z A-Z _ [\w\-\.]* -> 多个 字符-.
 const qnameCapture = `((?:${ncname}\\:)?${ncname})`
-const startTagOpen = new RegExp(`^<${qnameCapture}`)
-const startTagClose = /^\s*(\/?)>/
-const endTag = new RegExp(`^<\\/${qnameCapture}[^>]*>`)
-const doctype = /^<!DOCTYPE [^>]+>/i
+const startTagOpen = new RegExp(`^<${qnameCapture}`) // <h1
+const startTagClose = /^\s*(\/?)>/ //   /> 或者 >
+const endTag = new RegExp(`^<\\/${qnameCapture}[^>]*>`) //</span>
+const doctype = /^<!DOCTYPE [^>]+>/i // 以 <!DOCTYPE [多个非>字符]> 单次查找
 // #7298: escape - to avoid being pased as HTML comment when inlined in page
-const comment = /^<!\--/
-const conditionalComment = /^<!\[/
+const comment = /^<!\--/ // <!-- 开头
+const conditionalComment = /^<!\[/ // <![ 开头
 
 let IS_REGEX_CAPTURING_BROKEN = false
 'x'.replace(/x(.)?/g, function (m, g) {
@@ -50,6 +50,7 @@ const encodedAttrWithNewLines = /&(?:lt|gt|quot|amp|#10|#9);/g
 const isIgnoreNewlineTag = makeMap('pre,textarea', true)
 const shouldIgnoreFirstNewline = (tag, html) => tag && isIgnoreNewlineTag(tag) && html[0] === '\n'
 
+// 解码属性
 function decodeAttr (value, shouldDecodeNewlines) {
   const re = shouldDecodeNewlines ? encodedAttrWithNewLines : encodedAttr
   return value.replace(re, match => decodingMap[match])
@@ -64,15 +65,18 @@ export function parseHTML (html, options) {
   let last, lastTag
   while (html) {
     last = html
-    // Make sure we're not in a plaintext content element like script/style
+    // 如果没有lastTag，并确保我们不是在一个纯文本内容元素中：script、style、textarea
     if (!lastTag || !isPlainTextElement(lastTag)) {
+      // 文本结束，通过<查找。
       let textEnd = html.indexOf('<')
+      // 文本结束位置在第一个字符，即第一个标签为<
       if (textEnd === 0) {
-        // Comment:
+        // 注释匹配
         if (comment.test(html)) {
           const commentEnd = html.indexOf('-->')
 
           if (commentEnd >= 0) {
+            // 如果需要保留注释，执行 option.comment 方法
             if (options.shouldKeepComment) {
               options.comment(html.substring(4, commentEnd))
             }
@@ -82,6 +86,7 @@ export function parseHTML (html, options) {
         }
 
         // http://en.wikipedia.org/wiki/Conditional_comment#Downlevel-revealed_conditional_comment
+        // 条件注释
         if (conditionalComment.test(html)) {
           const conditionalEnd = html.indexOf(']>')
 
@@ -98,16 +103,17 @@ export function parseHTML (html, options) {
           continue
         }
 
-        // End tag:
+        // End tag: 结束标签
         const endTagMatch = html.match(endTag)
         if (endTagMatch) {
           const curIndex = index
           advance(endTagMatch[0].length)
+          // 解析结束标签
           parseEndTag(endTagMatch[1], curIndex, index)
           continue
         }
 
-        // Start tag:
+        // Start tag: 开始标签
         const startTagMatch = parseStartTag()
         if (startTagMatch) {
           handleStartTag(startTagMatch)
@@ -118,9 +124,12 @@ export function parseHTML (html, options) {
         }
       }
 
+      // < 标签位置大于等于0，即标签中有内容
       let text, rest, next
       if (textEnd >= 0) {
+        // 截取从 0 - textEnd 的字符串
         rest = html.slice(textEnd)
+        // 获取在普通字符串中的<字符，而不是开始标签、结束标签、注释、条件注释
         while (
           !endTag.test(rest) &&
           !startTagOpen.test(rest) &&
@@ -133,6 +142,7 @@ export function parseHTML (html, options) {
           textEnd += next
           rest = html.slice(textEnd)
         }
+        // 最终截取字符串内容
         text = html.substring(0, textEnd)
         advance(textEnd)
       }
@@ -141,11 +151,12 @@ export function parseHTML (html, options) {
         text = html
         html = ''
       }
-
+      // 绘制文本内容，使用 options.char 方法。
       if (options.chars && text) {
         options.chars(text)
       }
     } else {
+      // 如果lastTag 为 script、style、textarea
       let endTagLength = 0
       const stackedTag = lastTag.toLowerCase()
       const reStackedTag = reCache[stackedTag] || (reCache[stackedTag] = new RegExp('([\\s\\S]*?)(</' + stackedTag + '[^>]*>)', 'i'))
@@ -153,12 +164,13 @@ export function parseHTML (html, options) {
         endTagLength = endTag.length
         if (!isPlainTextElement(stackedTag) && stackedTag !== 'noscript') {
           text = text
-            .replace(/<!\--([\s\S]*?)-->/g, '$1') // #7298
-            .replace(/<!\[CDATA\[([\s\S]*?)]]>/g, '$1')
+            .replace(/<!\--([\s\S]*?)-->/g, '$1') // <!--xxx--> 
+            .replace(/<!\[CDATA\[([\s\S]*?)]]>/g, '$1') //<!CDATAxxx>
         }
         if (shouldIgnoreFirstNewline(stackedTag, text)) {
           text = text.slice(1)
         }
+        // 处理文本内容，并使用 options.char 方法。
         if (options.chars) {
           options.chars(text)
         }
@@ -166,10 +178,13 @@ export function parseHTML (html, options) {
       })
       index += html.length - rest.length
       html = rest
+      // 解析结束tag
       parseEndTag(stackedTag, index - endTagLength, index)
     }
 
+    // html文本到最后
     if (html === last) {
+      // 执行 options.chars
       options.chars && options.chars(html)
       if (process.env.NODE_ENV !== 'production' && !stack.length && options.warn) {
         options.warn(`Mal-formatted tag at end of template: "${html}"`)
@@ -178,14 +193,16 @@ export function parseHTML (html, options) {
     }
   }
 
-  // Clean up any remaining tags
+  // 清理所有残留标签
   parseEndTag()
 
+  // 推进。向前推进n个字符
   function advance (n) {
     index += n
     html = html.substring(n)
   }
 
+  // 解析开始标签
   function parseStartTag () {
     const start = html.match(startTagOpen)
     if (start) {
@@ -209,6 +226,7 @@ export function parseHTML (html, options) {
     }
   }
 
+  // 处理开始标签，将开始标签中的属性提取出来。
   function handleStartTag (match) {
     const tagName = match.tagName
     const unarySlash = match.unarySlash
@@ -254,6 +272,7 @@ export function parseHTML (html, options) {
     }
   }
 
+  // 解析结束TAG
   function parseEndTag (tagName, start, end) {
     let pos, lowerCasedTagName
     if (start == null) start = index
@@ -263,7 +282,7 @@ export function parseHTML (html, options) {
       lowerCasedTagName = tagName.toLowerCase()
     }
 
-    // Find the closest opened tag of the same type
+    // 找到同类的开始 TAG 在堆栈中的位置
     if (tagName) {
       for (pos = stack.length - 1; pos >= 0; pos--) {
         if (stack[pos].lowerCasedTag === lowerCasedTagName) {
@@ -275,6 +294,7 @@ export function parseHTML (html, options) {
       pos = 0
     }
 
+    // 对标签的开始标签使用 options 方法。
     if (pos >= 0) {
       // Close all the open elements, up the stack
       for (let i = stack.length - 1; i >= pos; i--) {
@@ -292,13 +312,16 @@ export function parseHTML (html, options) {
       }
 
       // Remove the open elements from the stack
+      // 从栈中移除元素，并标记为 lastTag
       stack.length = pos
       lastTag = pos && stack[pos - 1].tag
     } else if (lowerCasedTagName === 'br') {
+      // 回车标签
       if (options.start) {
         options.start(tagName, [], true, start, end)
       }
     } else if (lowerCasedTagName === 'p') {
+      // 段落标签
       if (options.start) {
         options.start(tagName, [], false, start, end)
       }

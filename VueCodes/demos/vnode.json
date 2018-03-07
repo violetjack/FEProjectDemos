@@ -1,0 +1,42 @@
+{
+    "tag": "div",
+    "data": {
+        "attr": { "id": "app" }
+    },
+    "children": [
+        {
+            "tag": "span",
+            "children": [
+                { "text": "hello Vue.js" }
+            ]
+        },
+        {
+            "tag": "ul",
+            "children": [
+                {
+                    "tag": "li",
+                    "data": { "staticClass": "item-cls" },
+                    "children": [
+                        { "text": "jack" }
+                    ]
+                },
+                {
+                    "tag": "li",
+                    "data": { "staticClass": "item-cls" },
+                    "children": [
+                        { "text": "rose" }
+                    ]
+                },
+                {
+                    "tag": "li",
+                    "data": { "staticClass": "item-cls" },
+                    "children": [
+                        { "text": "james" }
+                    ]
+                }
+            ]
+        }
+    ],
+    "context": "$Vue$3",
+    "elm": "div#app"
+}

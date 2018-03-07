@@ -3,8 +3,8 @@
 import { cached } from 'shared/util'
 import { parseFilters } from './filter-parser'
 
-const defaultTagRE = /\{\{((?:.|\n)+?)\}\}/g
-const regexEscapeRE = /[-.*+?^${}()|[\]\/\\]/g
+const defaultTagRE = /\{\{((?:.|\n)+?)\}\}/g // 全局查找 {{ 除\n外任意字符串或者\n  }}
+const regexEscapeRE = /[-.*+?^${}()|[\]\/\\]/g // 全局查找 -.*+?${}() 或 ]/\
 
 const buildRegex = cached(delimiters => {
   const open = delimiters[0].replace(regexEscapeRE, '\\$&')

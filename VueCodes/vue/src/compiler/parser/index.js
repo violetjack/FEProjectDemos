@@ -19,15 +19,16 @@ import {
   pluckModuleFunction
 } from '../helpers'
 
-export const onRE = /^@|^v-on:/
-export const dirRE = /^v-|^@|^:/
-export const forAliasRE = /(.*?)\s+(?:in|of)\s+(.*)/
-export const forIteratorRE = /,([^,\}\]]*)(?:,([^,\}\]]*))?$/
-const stripParensRE = /^\(|\)$/g
+// 正则
+export const onRE = /^@|^v-on:/ // @ v-on
+export const dirRE = /^v-|^@|^:/ //v- @ :
+export const forAliasRE = /(.*?)\s+(?:in|of)\s+(.*)/ // item in|of list
+export const forIteratorRE = /,([^,\}\]]*)(?:,([^,\}\]]*))?$/ 
+const stripParensRE = /^\(|\)$/g // ()
 
-const argRE = /:(.*)$/
-export const bindRE = /^:|^v-bind:/
-const modifierRE = /\.[^.]+/g
+const argRE = /:(.*)$/ // :
+export const bindRE = /^:|^v-bind:/ // : v-bind
+const modifierRE = /\.[^.]+/g // .xxx
 
 const decodeHTMLCached = cached(he.decode)
 
@@ -43,6 +44,7 @@ let platformGetTagNamespace
 
 type Attr = { name: string; value: string };
 
+// 创建AST元素
 export function createASTElement (
   tag: string,
   attrs: Array<Attr>,
@@ -59,7 +61,7 @@ export function createASTElement (
 }
 
 /**
- * Convert HTML string to AST.
+ * 将HTML字符串转为AST
  */
 export function parse (
   template: string,
@@ -85,6 +87,7 @@ export function parse (
   let inPre = false
   let warned = false
 
+  // 警报一次
   function warnOnce (msg) {
     if (!warned) {
       warned = true
@@ -92,6 +95,7 @@ export function parse (
     }
   }
 
+  // 关闭元素
   function closeElement (element) {
     // check pre state
     if (element.pre) {
@@ -106,6 +110,7 @@ export function parse (
     }
   }
 
+  // 解析HTML，核心代码。
   parseHTML(template, {
     warn,
     expectHTML: options.expectHTML,
@@ -115,16 +120,15 @@ export function parse (
     shouldDecodeNewlinesForHref: options.shouldDecodeNewlinesForHref,
     shouldKeepComment: options.comments,
     start (tag, attrs, unary) {
-      // check namespace.
-      // inherit parent ns if there is one
+      // 确定命名空间
       const ns = (currentParent && currentParent.ns) || platformGetTagNamespace(tag)
 
-      // handle IE svg bug
-      /* istanbul ignore if */
+      // 处理 IE 的 SVG bug
       if (isIE && ns === 'svg') {
         attrs = guardIESVGBug(attrs)
       }
 
+      // 获取AST元素
       let element: ASTElement = createASTElement(tag, attrs, currentParent)
       if (ns) {
         element.ns = ns
@@ -132,19 +136,16 @@ export function parse (
 
       if (isForbiddenTag(element) && !isServerRendering()) {
         element.forbidden = true
-        process.env.NODE_ENV !== 'production' && warn(
-          'Templates should only be responsible for mapping the state to the ' +
-          'UI. Avoid placing tags with side-effects in your templates, such as ' +
-          `<${tag}>` + ', as they will not be parsed.'
-        )
       }
 
-      // apply pre-transforms
+      // 遍历执行 preTransforms 方法
       for (let i = 0; i < preTransforms.length; i++) {
         element = preTransforms[i](element, options) || element
       }
 
+      // 处理各种方法
       if (!inVPre) {
+        // v-pre
         processPre(element)
         if (element.pre) {
           inVPre = true
@@ -154,16 +155,18 @@ export function parse (
         inPre = true
       }
       if (inVPre) {
+        // 处理原始属性
         processRawAttrs(element)
       } else if (!element.processed) {
-        // structural directives
+        // v-for v-if v-once
         processFor(element)
         processIf(element)
         processOnce(element)
-        // element-scope stuff
+        // 元素填充？
         processElement(element, options)
       }
 
+      // 检查根节点约束
       function checkRootConstraints (el) {
         if (process.env.NODE_ENV !== 'production') {
           if (el.tag === 'slot' || el.tag === 'template') {
@@ -181,14 +184,16 @@ export function parse (
         }
       }
 
-      // tree management
+      // 语法树树管理
       if (!root) {
+        // 无root
         root = element
         checkRootConstraints(root)
       } else if (!stack.length) {
-        // allow root elements with v-if, v-else-if and v-else
+        // 允许有 v-if, v-else-if 和 v-else 的根元素
         if (root.if && (element.elseif || element.else)) {
           checkRootConstraints(element)
+          // 添加 if 条件
           addIfCondition(root, {
             exp: element.elseif,
             block: element
@@ -202,13 +207,16 @@ export function parse (
         }
       }
       if (currentParent && !element.forbidden) {
+        // v-else-if v-else
         if (element.elseif || element.else) {
+          // 处理 if 条件
           processIfConditions(element, currentParent)
-        } else if (element.slotScope) { // scoped slot
+        } else if (element.slotScope) { // slot-scope
           currentParent.plain = false
           const name = element.slotTarget || '"default"'
           ;(currentParent.scopedSlots || (currentParent.scopedSlots = {}))[name] = element
         } else {
+          // 将元素插入 children 数组中
           currentParent.children.push(element)
           element.parent = currentParent
         }
@@ -217,54 +225,49 @@ export function parse (
         currentParent = element
         stack.push(element)
       } else {
+        // 关闭元素
         closeElement(element)
       }
     },
 
     end () {
-      // remove trailing whitespace
+      // 删除尾随空格
       const element = stack[stack.length - 1]
       const lastNode = element.children[element.children.length - 1]
       if (lastNode && lastNode.type === 3 && lastNode.text === ' ' && !inPre) {
         element.children.pop()
       }
-      // pop stack
+      // 退栈
       stack.length -= 1
       currentParent = stack[stack.length - 1]
+      // 关闭元素
       closeElement(element)
     },
 
+    // 字符串添加到数组中
     chars (text: string) {
       if (!currentParent) {
-        if (process.env.NODE_ENV !== 'production') {
-          if (text === template) {
-            warnOnce(
-              'Component template requires a root element, rather than just text.'
-            )
-          } else if ((text = text.trim())) {
-            warnOnce(
-              `text "${text}" outside root element will be ignored.`
-            )
-          }
-        }
         return
       }
       // IE textarea placeholder bug
-      /* istanbul ignore if */
       if (isIE &&
         currentParent.tag === 'textarea' &&
         currentParent.attrsMap.placeholder === text
       ) {
         return
       }
+      // 获取元素 children
       const children = currentParent.children
+      // 获取文本内容
       text = inPre || text.trim()
         ? isTextTag(currentParent) ? text : decodeHTMLCached(text)
         // only preserve whitespace if its not right after a starting tag
         : preserveWhitespace && children.length ? ' ' : ''
       if (text) {
         let res
+        // inVPre 是判断 v-pre 的
         if (!inVPre && text !== ' ' && (res = parseText(text, delimiters))) {
+          // 表达式，会转为 _s(message) 表达式
           children.push({
             type: 2,
             expression: res.expression,
@@ -272,6 +275,7 @@ export function parse (
             text
           })
         } else if (text !== ' ' || !children.length || children[children.length - 1].text !== ' ') {
+          // 纯文本内容
           children.push({
             type: 3,
             text
@@ -279,6 +283,8 @@ export function parse (
         }
       }
     },
+
+    // 注释
     comment (text: string) {
       currentParent.children.push({
         type: 3,
@@ -290,12 +296,14 @@ export function parse (
   return root
 }
 
+// 预处理
 function processPre (el) {
   if (getAndRemoveAttr(el, 'v-pre') != null) {
     el.pre = true
   }
 }
 
+// 处理原生属性
 function processRawAttrs (el) {
   const l = el.attrsList.length
   if (l) {
@@ -312,6 +320,7 @@ function processRawAttrs (el) {
   }
 }
 
+// 处理AST元素
 export function processElement (element: ASTElement, options: CompilerOptions) {
   processKey(element)
 
@@ -328,6 +337,7 @@ export function processElement (element: ASTElement, options: CompilerOptions) {
   processAttrs(element)
 }
 
+// 处理 key
 function processKey (el) {
   const exp = getBindingAttr(el, 'key')
   if (exp) {
@@ -338,6 +348,7 @@ function processKey (el) {
   }
 }
 
+// 处理 ref
 function processRef (el) {
   const ref = getBindingAttr(el, 'ref')
   if (ref) {
@@ -346,6 +357,7 @@ function processRef (el) {
   }
 }
 
+// 处理 for
 export function processFor (el: ASTElement) {
   let exp
   if ((exp = getAndRemoveAttr(el, 'v-for'))) {
@@ -360,6 +372,7 @@ export function processFor (el: ASTElement) {
   }
 }
 
+// 对象类型
 type ForParseResult = {
   for: string;
   alias: string;
@@ -367,6 +380,7 @@ type ForParseResult = {
   iterator2?: string;
 };
 
+// 解析 for
 export function parseFor (exp: string): ?ForParseResult {
   const inMatch = exp.match(forAliasRE)
   if (!inMatch) return
@@ -386,6 +400,7 @@ export function parseFor (exp: string): ?ForParseResult {
   return res
 }
 
+// 处理if
 function processIf (el) {
   const exp = getAndRemoveAttr(el, 'v-if')
   if (exp) {
@@ -405,6 +420,7 @@ function processIf (el) {
   }
 }
 
+// 处理if条件
 function processIfConditions (el, parent) {
   const prev = findPrevElement(parent.children)
   if (prev && prev.if) {
@@ -420,6 +436,7 @@ function processIfConditions (el, parent) {
   }
 }
 
+// 发现元素的 type 为 1 的元素
 function findPrevElement (children: Array<any>): ASTElement | void {
   let i = children.length
   while (i--) {
@@ -437,6 +454,7 @@ function findPrevElement (children: Array<any>): ASTElement | void {
   }
 }
 
+// 添加 if 条件
 export function addIfCondition (el: ASTElement, condition: ASTIfCondition) {
   if (!el.ifConditions) {
     el.ifConditions = []
@@ -444,6 +462,7 @@ export function addIfCondition (el: ASTElement, condition: ASTIfCondition) {
   el.ifConditions.push(condition)
 }
 
+// 处理 once
 function processOnce (el) {
   const once = getAndRemoveAttr(el, 'v-once')
   if (once != null) {
@@ -451,6 +470,7 @@ function processOnce (el) {
   }
 }
 
+// 处理 slot
 function processSlot (el) {
   if (el.tag === 'slot') {
     el.slotName = getBindingAttr(el, 'name')
@@ -500,6 +520,7 @@ function processSlot (el) {
   }
 }
 
+// 处理组件
 function processComponent (el) {
   let binding
   if ((binding = getBindingAttr(el, 'is'))) {
@@ -510,20 +531,24 @@ function processComponent (el) {
   }
 }
 
+// 处理属性
 function processAttrs (el) {
   const list = el.attrsList
   let i, l, name, rawName, value, modifiers, isProp
   for (i = 0, l = list.length; i < l; i++) {
     name = rawName = list[i].name
     value = list[i].value
+    // 匹配 name 中是否有 v- @ :
     if (dirRE.test(name)) {
       // mark element as dynamic
       el.hasBindings = true
-      // modifiers
+      // 修饰符 .once .stop
       modifiers = parseModifiers(name)
       if (modifiers) {
+        // 去除修饰符
         name = name.replace(modifierRE, '')
       }
+      // 处理 v-bind
       if (bindRE.test(name)) { // v-bind
         name = name.replace(bindRE, '')
         value = parseFilters(value)
@@ -554,6 +579,7 @@ function processAttrs (el) {
         }
       } else if (onRE.test(name)) { // v-on
         name = name.replace(onRE, '')
+        // 添加事件处理器
         addHandler(el, name, value, modifiers, false, warn)
       } else { // normal directives
         name = name.replace(dirRE, '')
@@ -593,6 +619,7 @@ function processAttrs (el) {
   }
 }
 
+// 向上遍历父级元素，如果父级元素有 for 属性则返回true。
 function checkInFor (el: ASTElement): boolean {
   let parent = el
   while (parent) {
@@ -645,7 +672,7 @@ function isForbiddenTag (el): boolean {
 const ieNSBug = /^xmlns:NS\d+/
 const ieNSPrefix = /^NS\d+:/
 
-/* istanbul ignore next */
+// 保护 IE 的 SVG Bug
 function guardIESVGBug (attrs) {
   const res = []
   for (let i = 0; i < attrs.length; i++) {
@@ -658,6 +685,7 @@ function guardIESVGBug (attrs) {
   return res
 }
 
+// 确认别名model
 function checkForAliasModel (el, value) {
   let _el = el
   while (_el) {

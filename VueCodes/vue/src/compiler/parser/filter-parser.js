@@ -1,6 +1,7 @@
 /* @flow */
 
-const validDivisionCharRE = /[\w).+\-_$\]]/
+// 有效分割字符
+const validDivisionCharRE = /[\w).+\-_$\]]/ // 字母、数字、下划线 ) 除换行符外任何字符 + - _ $ ]
 
 export function parseFilters (exp: string): string {
   let inSingle = false
