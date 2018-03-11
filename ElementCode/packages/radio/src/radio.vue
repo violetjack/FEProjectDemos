@@ -1,0 +1,146 @@
+<template>
+  <label
+    class="el-radio"
+    :class="[
+      border && radioSize ? 'el-radio--' + radioSize : '',
+      { 'is-disabled': isDisabled },
+      { 'is-focus': focus },
+      { 'is-bordered': border },
+      { 'is-checked': model === label }
+    ]"
+    role="radio"
+    :aria-checked="model === label"
+    :aria-disabled="isDisabled"
+    :tabindex="tabIndex"
+    @keydown.space.stop.prevent="model = label"
+  >
+    <!-- radio 图标部分 -->
+    <span class="el-radio__input"
+      :class="{
+        'is-disabled': isDisabled,
+        'is-checked': model === label
+      }"
+    > 
+      <!-- 图标效果 -->
+      <span class="el-radio__inner"></span>
+      <input
+        class="el-radio__original"
+        :value="label"
+        type="radio"
+        v-model="model"
+        @focus="focus = true"
+        @blur="focus = false"
+        @change="handleChange"
+        :name="name"
+        :disabled="isDisabled"
+        tabindex="-1"
+      >
+    </span>
+    <!-- 文本内容 -->
+    <span class="el-radio__label">
+      <slot></slot>
+      <template v-if="!$slots.default">{{label}}</template>
+    </span>
+  </label>
+</template>
+<script>
+  import Emitter from 'element-ui/src/mixins/emitter';
+
+  export default {
+    name: 'ElRadio',
+    // 混合选项
+    mixins: [Emitter],
+
+    inject: {
+      elForm: {
+        default: ''
+      },
+
+      elFormItem: {
+        default: ''
+      }
+    },
+
+    componentName: 'ElRadio',
+
+    props: {
+      // value值
+      value: {},
+      // Radio 的 value
+      label: {},
+      // 是否禁用
+      disabled: Boolean,
+      // 原生 name 属性
+      name: String,
+      // 是否显示边框
+      border: Boolean,
+      // Radio 的尺寸，仅在 border 为真时有效 medium / small / mini
+      size: String
+    },
+
+    data() {
+      return {
+        focus: false
+      };
+    },
+    computed: {
+      // 向上遍历查询父级组件是否有 ElRadioGroup，即是否在按钮组中
+      isGroup() {
+        let parent = this.$parent;
+        while (parent) {
+          if (parent.$options.componentName !== 'ElRadioGroup') {
+            parent = parent.$parent;
+          } else {
+            this._radioGroup = parent;
+            return true;
+          }
+        }
+        return false;
+      },
+      // 重新定义 v-model 绑定内容的 get 和 set
+      model: {
+        get() {
+          return this.isGroup ? this._radioGroup.value : this.value;
+        },
+        set(val) {
+          if (this.isGroup) {
+            this.dispatch('ElRadioGroup', 'input', [val]);
+          } else {
+            this.$emit('input', val);
+          }
+        }
+      },
+      // elFormItem 尺寸
+      _elFormItemSize() {
+        return (this.elFormItem || {}).elFormItemSize;
+      },
+      // 计算 radio 尺寸，用于显示带有边框的radio的尺寸大小
+      radioSize() {
+        const temRadioSize = this.size || this._elFormItemSize || (this.$ELEMENT || {}).size;
+        return this.isGroup
+          ? this._radioGroup.radioGroupSize || temRadioSize
+          : temRadioSize;
+      },
+      // 是否禁用，如果radioGroup禁用则按钮禁用。
+      isDisabled() {
+        return this.isGroup
+          ? this._radioGroup.disabled || this.disabled || (this.elForm || {}).disabled
+          : this.disabled || (this.elForm || {}).disabled;
+      },
+      // 标签索引 0 or -1
+      tabIndex() {
+        return !this.isDisabled ? (this.isGroup ? (this.model === this.label ? 0 : -1) : 0) : -1;
+      }
+    },
+
+    methods: {
+      // 处理 @change 事件，如果有按钮组，出发按钮组事件。
+      handleChange() {
+        this.$nextTick(() => {
+          this.$emit('change', this.model);
+          this.isGroup && this.dispatch('ElRadioGroup', 'handleChange', this.model);
+        });
+      }
+    }
+  };
+</script>

@@ -1,36 +1,33 @@
-# Vue.js学习系列项目
+# Vue.js学习系列项目源码
 
-作者在学习过程中写的一些小demo，便于查看、学习和交流。
+作者在学习过程中写的一些小demo和源码注释，便于查看、学习和交流。
 
-## 博客地址
+## Vue实验室
 
-* [Vue.js学习系列一 —— vue-router2学习实践笔记（附DEMO）](http://www.jianshu.com/p/8013d8d37bd0)
-* [Vue.js学习系列二 —— vuex学习实践笔记（附DEMO）](http://www.jianshu.com/p/d6f7e11f18af)
-* [Vue.js学习系列三 —— axios和网络传输相关知识的学习实践](http://www.jianshu.com/p/8e5fb763c3d7)
-* [Vue.js学习系列四 —— Webpack打包工具的使用](http://www.jianshu.com/p/aef34acd111f)
-* [Vue.js学习系列五 —— 从VUE-CLI来聊聊ESLint](http://www.jianshu.com/p/efb6fbed6fac)
-* [Vue.js学习系列六 —— Vue单元测试Karma+Mocha学习笔记](http://www.jianshu.com/p/073d25a3bba0)
-* [Vue.js学习系列七 —— Vue服务器渲染Nuxt学习](https://www.jianshu.com/p/ba7466d7101a)
-* [Vue源码学习笔记](https://www.jianshu.com/p/67bc7ae92e4a)
-
-之后还会持续更新本项目，欢迎star关注我哦~
+相关博客都将收录到新建的专栏博客 —— [Vue 实验室](https://violetjack.github.io/) 中。
+本专栏**只专注与 Vue.js 相关知识的学习和分享！致力于成为全中文社区最全最好的 Vue.js 相关系列博客。**
 
 ## TODO List
 
-* 整理Vue学习系列博客文本错误。
-* Vue源码学习笔记
-* 重写Vue学习系列
-* 整理Demo代码
-* 完成遗留的两个项目 `ElementUIDemo` 和 `MintUIDemo`。
-* 不断优化本系列博客
-* 可能会出进阶版本（高级用法、源码解析）
+* Vue学习系列（7/7）
+* Vue源码学习系列（8/15）
+* ElementUI源码学习系列（2/8）
+* mint ui源码学习系列
+* Vuex 源码学习系列
+* vue-router 源码学习系列
+* weex 源码探究
+* Vue 相关技术栈用法和源码学习系列
+* ……
 
 ## Plan
 
 今年目标很简单：专注于Vue前端相关技术的学习、使用和分享。
-现在我正在坚持每天五点早起学习、写博客两个小时，希望能在Vue前端技术方向达到一定水平，也希望能够帮助到更多的朋友。
+每天早起写两小时博客，在保证质量情况下保证3-4天一更新。
+
+## 乐于助人的我
+
+在此留下我的 [知乎](https://www.zhihu.com/people/violetjack/activities) 和 [SegmentFault](https://segmentfault.com/u/violetjack) 地址。关于 Vue.js 相关的问题欢迎找到我哦，如果在我能力范围内，一定尽力回答帮助解决问题。这么做的动机一是因为我乐于助人，二是因为我想解决更多 Vue.js 相关的问题，成为解决 Vue.js 相关问题的小能手~
 
 ## 最后
 
-如果有任何想法、意见或者是批评都欢迎提出 `issue`，你们的反馈是我最大的动力。
-差点忘了……如果觉得本项目可以的话，请把你的Star留下~
+欢迎提交 issue 和 pr 让项目越变越好，也欢迎 star 关注收藏本项目~
