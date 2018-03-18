@@ -2,22 +2,22 @@ export default {
   name: 'ElCol',
 
   props: {
-    span: {
+    span: { // 栅格占据的列数
       type: Number,
       default: 24
     },
-    tag: {
+    tag: { // 自定义元素标签
       type: String,
       default: 'div'
     },
-    offset: Number,
-    pull: Number,
-    push: Number,
-    xs: [Number, Object],
-    sm: [Number, Object],
-    md: [Number, Object],
-    lg: [Number, Object],
-    xl: [Number, Object]
+    offset: Number, // 栅格左侧的间隔格数
+    pull: Number, // 栅格向左移动格数
+    push: Number, // 栅格向右移动格数
+    xs: [Number, Object], // <768px 响应式栅格数或者栅格属性对象
+    sm: [Number, Object], // ≥768px 响应式栅格数或者栅格属性对象
+    md: [Number, Object], // ≥992px 响应式栅格数或者栅格属性对象
+    lg: [Number, Object], // ≥1200px 响应式栅格数或者栅格属性对象
+    xl: [Number, Object] // ≥1920px 响应式栅格数或者栅格属性对象
   },
 
   computed: {
@@ -63,6 +63,7 @@ export default {
       }
     });
 
+    // 看看 render 函数源码
     return h(this.tag, {
       class: ['el-col', classList],
       style

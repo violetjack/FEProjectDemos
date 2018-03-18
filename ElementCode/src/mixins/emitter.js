@@ -1,4 +1,4 @@
-// 广播
+// 广播 向子孙组件发送数据
 function broadcast(componentName, eventName, params) {
   // 遍历子组件
   this.$children.forEach(child => {
@@ -16,6 +16,7 @@ function broadcast(componentName, eventName, params) {
 }
 export default {
   methods: {
+    //向父级组件发送消息
     dispatch(componentName, eventName, params) {
       // 父级组件及其组件名
       var parent = this.$parent || this.$root;

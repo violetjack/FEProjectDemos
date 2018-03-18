@@ -9,6 +9,7 @@
       v-if="multiple"
       ref="tags"
       :style="{ 'max-width': inputWidth - 32 + 'px' }">
+      <!-- collapse tags 多选时是否将选中值按文字的形式展示 -->
       <span v-if="collapseTags && selected.length">
         <el-tag
           :closable="!selectDisabled"
@@ -28,6 +29,7 @@
           <span class="el-select__tags-text">+ {{ selected.length - 1 }}</span>
         </el-tag>
       </span>
+      <!-- 多选，多个 el-tag 组成 -->
       <transition-group @after-leave="resetInputHeight" v-if="!collapseTags">
         <el-tag
           v-for="item in selected"
@@ -127,22 +129,26 @@
 </template>
 
 <script type="text/babel">
+  // mixins
   import Emitter from 'element-ui/src/mixins/emitter';
   import Focus from 'element-ui/src/mixins/focus';
   import Locale from 'element-ui/src/mixins/locale';
+  // components
   import ElInput from 'element-ui/packages/input';
   import ElSelectMenu from './select-dropdown.vue';
   import ElOption from './option.vue';
   import ElTag from 'element-ui/packages/tag';
   import ElScrollbar from 'element-ui/packages/scrollbar';
+  // utils
   import debounce from 'throttle-debounce/debounce';
   import Clickoutside from 'element-ui/src/utils/clickoutside';
-  import { addClass, removeClass, hasClass } from 'element-ui/src/utils/dom';
-  import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event';
+  import { addClass, removeClass, hasClass } from 'element-ui/src/utils/dom'; // 操作 dom 的 class
+  import { addResizeListener, removeResizeListener } from 'element-ui/src/utils/resize-event'; // 添加、移除 resize 监听器
   import { t } from 'element-ui/src/locale';
   import scrollIntoView from 'element-ui/src/utils/scroll-into-view';
   import { getValueByPath } from 'element-ui/src/utils/util';
   import { valueEquals } from 'element-ui/src/utils/util';
+
   import NavigationMixin from './navigation-mixin';
 
   const sizeMap = {
@@ -157,7 +163,7 @@
     name: 'ElSelect',
 
     componentName: 'ElSelect',
-
+    // 注入属性
     inject: {
       elForm: {
         default: ''
@@ -167,7 +173,7 @@
         default: ''
       }
     },
-
+    // 向子孙组件传递数据
     provide() {
       return {
         'select': this
@@ -227,7 +233,7 @@
           : 'small';
       }
     },
-
+    // 组件
     components: {
       ElInput,
       ElSelectMenu,
@@ -235,56 +241,56 @@
       ElTag,
       ElScrollbar
     },
-
+    // 自定义指令
     directives: { Clickoutside },
 
     props: {
-      name: String,
-      id: String,
-      value: {
+      name: String, // name 属性
+      id: String, // id 属性
+      value: { // value 属性
         required: true
       },
-      autoComplete: {
+      autoComplete: { // autocomplete 属性
         type: String,
         default: 'off'
       },
-      size: String,
-      disabled: Boolean,
-      clearable: Boolean,
-      filterable: Boolean,
-      allowCreate: Boolean,
-      loading: Boolean,
-      popperClass: String,
-      remote: Boolean,
-      loadingText: String,
-      noMatchText: String,
-      noDataText: String,
-      remoteMethod: Function,
-      filterMethod: Function,
-      multiple: Boolean,
-      multipleLimit: {
+      size: String, // 输入框尺寸
+      disabled: Boolean, // 是否禁用
+      clearable: Boolean, // 单选时是否可以清空选项
+      filterable: Boolean, // 是否可搜索
+      allowCreate: Boolean, // 是否允许用户创建新条目，需要配合 filterable 使用
+      loading: Boolean, // 是否正在从远程获取数据
+      popperClass: String, // Select 下拉框类名
+      remote: Boolean, // 是否为远程搜索
+      loadingText: String, // 远程加载时的文字
+      noMatchText: String, // 搜索条件无匹配时显示的文字
+      noDataText: String, // 选项为空时显示的文字
+      remoteMethod: Function, // 远程搜索方法
+      filterMethod: Function, // 自定义搜索方法
+      multiple: Boolean, // 是否多选
+      multipleLimit: { // 多选时用户最多可以选择的项目数，为0则不限制。
         type: Number,
         default: 0
       },
-      placeholder: {
+      placeholder: { // 占位符
         type: String,
         default() {
           return t('el.select.placeholder');
         }
       },
-      defaultFirstOption: Boolean,
-      reserveKeyword: Boolean,
-      valueKey: {
+      defaultFirstOption: Boolean, // 在输入框按下回车，选择第一个匹配项。
+      reserveKeyword: Boolean, // 多选且可搜索时，是否在选中一个选项后保留当前搜索关键词
+      valueKey: { // 作为 value 唯一标识的键名，绑定值为对象类型时必填。
         type: String,
         default: 'value'
       },
-      collapseTags: Boolean,
-      popperAppendToBody: {
+      collapseTags: Boolean, // 多选时是否将选中值按文字的形式展示
+      popperAppendToBody: { // 是否将弹出框插入至 body 元素。
         type: Boolean,
         default: true
       }
     },
-
+    // select 用到的本地数据
     data() {
       return {
         options: [],
@@ -404,6 +410,7 @@
     },
 
     methods: {
+      // 处理查询改变
       handleQueryChange(val) {
         if (this.previousQuery === val) return;
         if (
@@ -439,21 +446,21 @@
           this.checkDefaultFirstOption();
         }
       },
-
+      // 处理图片隐藏
       handleIconHide() {
         let icon = this.$el.querySelector('.el-input__icon');
         if (icon) {
           removeClass(icon, 'is-reverse');
         }
       },
-
+      // 处理显示图片
       handleIconShow() {
         let icon = this.$el.querySelector('.el-input__icon');
         if (icon && !hasClass(icon, 'el-icon-circle-close')) {
           addClass(icon, 'is-reverse');
         }
       },
-
+      // 滑动到配置项
       scrollToOption(option) {
         const target = Array.isArray(option) && option[0] ? option[0].$el : option.$el;
         if (this.$refs.popper && target) {
@@ -462,18 +469,18 @@
         }
         this.$refs.scrollbar && this.$refs.scrollbar.handleScroll();
       },
-
+      // 处理菜单输入
       handleMenuEnter() {
         this.$nextTick(() => this.scrollToOption(this.selected));
       },
-
+      // 触发change事件
       emitChange(val) {
         if (!valueEquals(this.value, val)) {
           this.$emit('change', val);
           this.dispatch('ElFormItem', 'el.form.change', val);
         }
       },
-
+      // 获取配置项
       getOption(value) {
         let option;
         const isObject = Object.prototype.toString.call(value).toLowerCase() === '[object object]';
@@ -499,7 +506,7 @@
         }
         return newOption;
       },
-
+      // 设置选择项
       setSelected() {
         if (!this.multiple) {
           let option = this.getOption(this.value);
@@ -525,7 +532,7 @@
           this.resetInputHeight();
         });
       },
-
+      // 处理 focus 事件
       handleFocus(event) {
         if (!this.softFocus) {
           this.$emit('focus', event);
@@ -533,25 +540,25 @@
           this.softFocus = false;
         }
       },
-
+      // 处理 blur 失去焦点事件
       handleBlur(event) {
         this.$emit('blur', event);
       },
-
+      // 处理图标点击事件（删除按钮）
       handleIconClick(event) {
         if (this.iconClass.indexOf('circle-close') > -1) {
           this.deleteSelected(event);
         }
       },
-
+      // 销毁
       doDestroy() {
         this.$refs.popper && this.$refs.popper.doDestroy();
       },
-
+      // 处理关闭事件
       handleClose() {
         this.visible = false;
       },
-
+      // 触发最后的配置项的 hit 状态
       toggleLastOptionHitState(hit) {
         if (!Array.isArray(this.selected)) return;
         const option = this.selected[this.selected.length - 1];
@@ -565,7 +572,7 @@
         option.hitState = !option.hitState;
         return option.hitState;
       },
-
+      // 删除前一个标签
       deletePrevTag(e) {
         if (e.target.value.length <= 0 && !this.toggleLastOptionHitState()) {
           const value = this.value.slice();
@@ -574,19 +581,19 @@
           this.emitChange(value);
         }
       },
-
+      // 管理占位符
       managePlaceholder() {
         if (this.currentPlaceholder !== '') {
           this.currentPlaceholder = this.$refs.input.value ? '' : this.cachedPlaceHolder;
         }
       },
-
+      // 重置输入框状态
       resetInputState(e) {
         if (e.keyCode !== 8) this.toggleLastOptionHitState(false);
         this.inputLength = this.$refs.input.value.length * 15 + 20;
         this.resetInputHeight();
       },
-
+      // 重置输入框高度
       resetInputHeight() {
         if (this.collapseTags && !this.filterable) return;
         this.$nextTick(() => {
@@ -606,7 +613,7 @@
           }
         });
       },
-
+      // 重置悬浮索引
       resetHoverIndex() {
         setTimeout(() => {
           if (!this.multiple) {
@@ -620,7 +627,7 @@
           }
         }, 300);
       },
-
+      // 处理选项选中事件
       handleOptionSelect(option) {
         if (this.multiple) {
           const value = this.value.slice();
@@ -648,12 +655,12 @@
           this.setSoftFocus();
         });
       },
-
+      // 设置软焦点
       setSoftFocus() {
         this.softFocus = true;
         (this.$refs.input || this.$refs.reference).focus();
       },
-
+      // 获取 value 的索引
       getValueIndex(arr = [], value) {
         const isObject = Object.prototype.toString.call(value).toLowerCase() === '[object object]';
         if (!isObject) {
@@ -671,7 +678,7 @@
           return index;
         }
       },
-
+      // 触发菜单
       toggleMenu() {
         if (!this.selectDisabled) {
           this.visible = !this.visible;
@@ -680,7 +687,7 @@
           }
         }
       },
-
+      // 选择 option
       selectOption() {
         if (!this.visible) {
           this.toggleMenu();
@@ -690,7 +697,7 @@
           }
         }
       },
-
+      // 删除选中
       deleteSelected(event) {
         event.stopPropagation();
         this.$emit('input', '');
@@ -698,7 +705,7 @@
         this.visible = false;
         this.$emit('clear');
       },
-
+      // 删除标签
       deleteTag(event, tag) {
         let index = this.selected.indexOf(tag);
         if (index > -1 && !this.selectDisabled) {
@@ -710,14 +717,14 @@
         }
         event.stopPropagation();
       },
-
+      // 文本框改变事件（搜索）
       onInputChange() {
         if (this.filterable && this.query !== this.selectedLabel) {
           this.query = this.selectedLabel;
           this.handleQueryChange(this.query);
         }
       },
-
+      // option 销毁事件
       onOptionDestroy(index) {
         if (index > -1) {
           this.optionsCount--;
@@ -725,16 +732,16 @@
           this.options.splice(index, 1);
         }
       },
-
+      // 重置文本框宽度
       resetInputWidth() {
         this.inputWidth = this.$refs.reference.$el.getBoundingClientRect().width;
       },
-
+      // 处理 resize
       handleResize() {
         this.resetInputWidth();
         if (this.multiple) this.resetInputHeight();
       },
-
+      // 验证默认第一个 option
       checkDefaultFirstOption() {
         this.hoverIndex = -1;
         // highlight the created option
@@ -764,7 +771,7 @@
           }
         }
       },
-
+      // 获取 value 的 key
       getValueKey(item) {
         if (Object.prototype.toString.call(item.value).toLowerCase() !== '[object object]') {
           return item.value;
@@ -775,6 +782,7 @@
     },
 
     created() {
+      // 占位符
       this.cachedPlaceHolder = this.currentPlaceholder = this.placeholder;
       if (this.multiple && !Array.isArray(this.value)) {
         this.$emit('input', []);

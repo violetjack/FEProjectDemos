@@ -16,6 +16,7 @@
 </template>
 
 <script type="text/babel">
+  // 向子孙组件和父级组件发送消息的行为
   import Emitter from 'element-ui/src/mixins/emitter';
   import { getValueByPath } from 'element-ui/src/utils/util';
 
@@ -29,12 +30,12 @@
     inject: ['select'],
 
     props: {
-      value: {
+      value: { // 选项值
         required: true
       },
-      label: [String, Number],
-      created: Boolean,
-      disabled: {
+      label: [String, Number], // 选项标签
+      created: Boolean, // 
+      disabled: { // 选项是否禁用
         type: Boolean,
         default: false
       }
