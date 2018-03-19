@@ -4,6 +4,7 @@
     :class="[selectSize ? 'el-select--' + selectSize : '']"
     @click.stop="toggleMenu"
     v-clickoutside="handleClose">
+    <!-- 多选 -->
     <div
       class="el-select__tags"
       v-if="multiple"
@@ -43,7 +44,7 @@
           <span class="el-select__tags-text">{{ item.currentLabel }}</span>
         </el-tag>
       </transition-group>
-
+      <!-- 可输入文本的查询框 -->
       <input
         type="text"
         class="el-select__input"
@@ -66,6 +67,7 @@
         :style="{ width: inputLength + 'px', 'max-width': inputWidth - 42 + 'px' }"
         ref="input">
     </div>
+    <!-- 显示结果框 read-only -->
     <el-input
       ref="reference"
       v-model="selectedLabel"
@@ -90,11 +92,13 @@
       @paste.native="debouncedOnInputChange"
       @mouseenter.native="inputHovering = true"
       @mouseleave.native="inputHovering = false">
+      <!-- 用户显示清空和向下箭头 -->
       <i slot="suffix"
        :class="['el-select__caret', 'el-input__icon', 'el-icon-' + iconClass]"
        @click="handleIconClick"
       ></i>
     </el-input>
+    <!-- 下拉菜单 -->
     <transition
       name="el-zoom-in-top"
       @before-enter="handleMenuEnter"
@@ -110,13 +114,16 @@
           ref="scrollbar"
           :class="{ 'is-empty': !allowCreate && query && filteredOptionsCount === 0 }"
           v-show="options.length > 0 && !loading">
+          <!-- 默认项（创建条目） -->
           <el-option
             :value="query"
             created
             v-if="showNewOption">
           </el-option>
+          <!-- 插槽，用于放 option 和 option-group -->
           <slot></slot>
         </el-scrollbar>
+        <!-- loading 加载中文本 -->
         <p
           class="el-select-dropdown__empty"
           v-if="emptyText &&
