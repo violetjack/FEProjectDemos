@@ -333,6 +333,7 @@
       },
 
       value(val) {
+        // 多选
         if (this.multiple) {
           this.resetInputHeight();
           if (val.length > 0 || (this.$refs.input && this.query !== '')) {
@@ -346,18 +347,24 @@
           }
         }
         this.setSelected();
+        // 非多选查询
         if (this.filterable && !this.multiple) {
           this.inputLength = 20;
         }
       },
 
       visible(val) {
+        // 在下拉菜单隐藏时
         if (!val) {
+          // 处理图标
           this.handleIconHide();
+          // 广播下拉菜单销毁事件
           this.broadcast('ElSelectDropdown', 'destroyPopper');
+          // 取消焦点
           if (this.$refs.input) {
             this.$refs.input.blur();
           }
+          // 重置过程
           this.query = '';
           this.previousQuery = null;
           this.selectedLabel = '';
@@ -370,7 +377,9 @@
               this.currentPlaceholder = this.cachedPlaceHolder;
             }
           });
+          // 如果不是多选，进行赋值现在 input 中
           if (!this.multiple) {
+            // selected 为当前选中的 option
             if (this.selected) {
               if (this.filterable && this.allowCreate &&
                 this.createdSelected && this.createdOption) {
@@ -378,12 +387,17 @@
               } else {
                 this.selectedLabel = this.selected.currentLabel;
               }
+              // 查询结果
               if (this.filterable) this.query = this.selectedLabel;
             }
           }
         } else {
+          // 下拉菜单显示
+          // 处理图片显示
           this.handleIconShow();
+          // 广播下拉菜单更新事件
           this.broadcast('ElSelectDropdown', 'updatePopper');
+          // 处理查询事件
           if (this.filterable) {
             this.query = this.remote ? '' : this.selectedLabel;
             this.handleQueryChange(this.query);
@@ -398,6 +412,7 @@
             }
           }
         }
+        // 触发 visible-change 事件
         this.$emit('visible-change', val);
       },
 
@@ -515,8 +530,10 @@
       },
       // 设置选择项
       setSelected() {
+        // 单选
         if (!this.multiple) {
           let option = this.getOption(this.value);
+          // created 是指创建出来的 option，这里指 allow-create 创建的 option 项
           if (option.created) {
             this.createdLabel = option.currentLabel;
             this.createdSelected = true;
@@ -528,14 +545,17 @@
           if (this.filterable) this.query = this.selectedLabel;
           return;
         }
+        // 遍历获取 option
         let result = [];
         if (Array.isArray(this.value)) {
           this.value.forEach(value => {
             result.push(this.getOption(value));
           });
         }
+        // 赋值
         this.selected = result;
         this.$nextTick(() => {
+          // 重置 input 高度
           this.resetInputHeight();
         });
       },
@@ -637,11 +657,14 @@
       // 处理选项选中事件
       handleOptionSelect(option) {
         if (this.multiple) {
+          // 多选
           const value = this.value.slice();
           const optionIndex = this.getValueIndex(value, option.value);
           if (optionIndex > -1) {
+            // 已选中，从数组中移除
             value.splice(optionIndex, 1);
           } else if (this.multipleLimit <= 0 || value.length < this.multipleLimit) {
+            // 未选中，传入数组
             value.push(option.value);
           }
           this.$emit('input', value);
@@ -651,12 +674,15 @@
             this.handleQueryChange('');
             this.inputLength = 20;
           }
+          // 查询
           if (this.filterable) this.$refs.input.focus();
         } else {
+          // 单选
           this.$emit('input', option.value);
           this.emitChange(option.value);
           this.visible = false;
         }
+        // 渲染完成后
         this.$nextTick(() => {
           this.scrollToOption(option);
           this.setSoftFocus();
