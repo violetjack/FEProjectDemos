@@ -50,7 +50,7 @@
         let { width, height } = el.getBoundingClientRect();
 
         if (!height) height = width * 3 / 4;
-
+        // 计算 cursor 位置
         this.cursorLeft = saturation * width / 100;
         this.cursorTop = (100 - value) * height / 100;
 
@@ -71,6 +71,7 @@
 
         this.cursorLeft = left;
         this.cursorTop = top;
+        // 计算颜色
         this.color.set({
           saturation: left / rect.width * 100,
           value: 100 - top / rect.height * 100

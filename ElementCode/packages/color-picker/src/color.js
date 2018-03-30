@@ -1,3 +1,4 @@
+// hsv 转 hsl
 const hsv2hsl = function(hue, sat, val) {
   return [
     hue,
@@ -8,10 +9,12 @@ const hsv2hsl = function(hue, sat, val) {
 
 // Need to handle 1.0 as 100%, since once it is a number, there is no difference between it and 1
 // <http://stackoverflow.com/questions/7422072/javascript-how-to-detect-number-as-a-decimal-including-1-0>
+// 是否为 1.0
 const isOnePointZero = function(n) {
   return typeof n === 'string' && n.indexOf('.') !== -1 && parseFloat(n) === 1;
 };
 
+// 是否为百分比
 const isPercentage = function(n) {
   return typeof n === 'string' && n.indexOf('%') !== -1;
 };
@@ -37,8 +40,10 @@ const bound01 = function(value, max) {
   return (value % max) / parseFloat(max);
 };
 
+// 十进制转十六进制
 const INT_HEX_MAP = { 10: 'A', 11: 'B', 12: 'C', 13: 'D', 14: 'E', 15: 'F' };
 
+// 转为十六进制颜色值
 const toHex = function({ r, g, b }) {
   const hexOne = function(value) {
     value = Math.min(Math.round(value), 255);
@@ -52,8 +57,10 @@ const toHex = function({ r, g, b }) {
   return '#' + hexOne(r) + hexOne(g) + hexOne(b);
 };
 
+// 十六进制转十进制
 const HEX_INT_MAP = { A: 10, B: 11, C: 12, D: 13, E: 14, F: 15 };
 
+// 解析十六进制
 const parseHexChannel = function(hex) {
   if (hex.length === 2) {
     return (HEX_INT_MAP[hex[0].toUpperCase()] || +hex[0]) * 16 + (HEX_INT_MAP[hex[1].toUpperCase()] || +hex[1]);
@@ -62,6 +69,7 @@ const parseHexChannel = function(hex) {
   return HEX_INT_MAP[hex[1].toUpperCase()] || +hex[1];
 };
 
+// hsl 转 hsv
 const hsl2hsv = function(hue, sat, light) {
   sat = sat / 100;
   light = light / 100;
@@ -84,6 +92,7 @@ const hsl2hsv = function(hue, sat, light) {
 };
 
 // `rgbToHsv`
+// rgb 转 hsv
 // Converts an RGB color value to HSV
 // *Assumes:* r, g, and b are contained in the set [0, 255] or [0, 1]
 // *Returns:* { h, s, v } in [0,1]
@@ -121,6 +130,7 @@ const rgb2hsv = function(r, g, b) {
 };
 
 // `hsvToRgb`
+// hsv 转 rgb
 // Converts an HSV color value to RGB.
 // *Assumes:* h is contained in [0, 1] or [0, 360] and s and v are contained in [0, 1] or [0, 100]
 // *Returns:* { r, g, b } in the set [0, 255]
@@ -167,7 +177,7 @@ export default class Color {
 
     this.doOnChange();
   }
-
+  // 设置属性值
   set(prop, value) {
     if (arguments.length === 1 && typeof prop === 'object') {
       for (let p in prop) {
@@ -182,15 +192,15 @@ export default class Color {
     this['_' + prop] = value;
     this.doOnChange();
   }
-
+  // 获取属性值 _hue
   get(prop) {
     return this['_' + prop];
   }
-
+  // 颜色值转为 rgb 返回
   toRgb() {
     return hsv2rgb(this._hue, this._saturation, this._value);
   }
-
+  // 格式化传入的值
   fromString(value) {
     if (!value) {
       this._hue = 0;
@@ -200,7 +210,7 @@ export default class Color {
       this.doOnChange();
       return;
     }
-
+    // 定义计算出结果后：赋值、改变。
     const fromHSV = (h, s, v) => {
       this._hue = Math.max(0, Math.min(360, h));
       this._saturation = Math.max(0, Math.min(100, s));
@@ -208,7 +218,7 @@ export default class Color {
 
       this.doOnChange();
     };
-
+    /* 颜色变化逻辑，最后都会转为 HSV 三个值执行 fromHSV 方法 */
     if (value.indexOf('hsl') !== -1) {
       const parts = value.replace(/hsla|hsl|\(|\)/gm, '')
         .split(/\s|,/g).filter((val) => val !== '').map((val, index) => index > 2 ? parseFloat(val) : parseInt(val, 10));
@@ -259,7 +269,7 @@ export default class Color {
       fromHSV(h, s, v);
     }
   }
-
+  // 更具计算结果定义当前颜色值 value
   doOnChange() {
     const { _hue, _saturation, _value, _alpha, format } = this;
 

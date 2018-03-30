@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hello Color Picker</title>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+</head>
+
+<body>
+    <style>
+        #container {
+            width: 500px;
+            height: 500px;
+            position: relative;
+            border: 1px solid black;
+        }
+
+        .drag {
+            height: 4px;
+            width: 4px;
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid red;
+            cursor: pointer;
+        }
+    </style>
+
+    <div id="app">
+        <div id="container" ref="container">
+            <div class="drag" 
+            :style="{
+                top: cursorTop + 'px',
+                left: cursorLeft + 'px'
+            }"></div>
+        </div>
+
+    </div>
+
+    <script>
+        new Vue({
+            el: "#app",
+            data: {
+                cursorLeft: 0,
+                cursorTop: 0,
+            },
+            mounted() {
+                draggable(this.$el, {
+                    drag: (event) => {
+                        this.handleDrag(event);
+                    },
+                    end: (event) => {
+                        this.handleDrag(event);
+                    }
+                });
+
+                this.update();
+            },
+            methods: {
+                handleDrag(event) {
+                    const container = this.$refs.container
+                    const el = this.$el;
+                    const rect = container.getBoundingClientRect();
+
+                    let left = event.clientX - rect.left;
+                    let top = event.clientY - rect.top;
+                    left = Math.max(0, left);
+                    left = Math.min(left, rect.width - 6);
+
+                    top = Math.max(0, top);
+                    top = Math.min(top, rect.height - 6);
+
+                    this.cursorLeft = left;
+                    this.cursorTop = top;
+                }
+            }
+        })
+
+        let isDragging = false;
+
+        function draggable(element, options) {
+            if (Vue.prototype.$isServer) return;
+            const moveFn = function (event) {
+                if (options.drag) {
+                    options.drag(event);
+                }
+            };
+            const upFn = function (event) {
+                document.removeEventListener('mousemove', moveFn);
+                document.removeEventListener('mouseup', upFn);
+                document.onselectstart = null;
+                document.ondragstart = null;
+
+                isDragging = false;
+
+                if (options.end) {
+                    options.end(event);
+                }
+            };
+            element.addEventListener('mousedown', function (event) {
+                if (isDragging) return;
+                document.onselectstart = function () { return false; };
+                document.ondragstart = function () { return false; };
+
+                document.addEventListener('mousemove', moveFn);
+                document.addEventListener('mouseup', upFn);
+                isDragging = true;
+
+                if (options.start) {
+                    options.start(event);
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
