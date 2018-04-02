@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hello Notice</title>
+    <script src="vue.js"></script>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <el-alert title="成功提示的文案" type="success">
+        </el-alert>
+        <el-alert title="消息提示的文案" type="info">
+        </el-alert>
+        <el-alert title="警告提示的文案" type="warning">
+        </el-alert>
+        <el-alert title="错误提示的文案" type="error">
+        </el-alert>
+        <el-alert title="成功提示的文案" type="success" description="文字说明文字说明文字说明文字说明文字说明文字说明" show-icon>
+        </el-alert>
+        <el-button type="primary" @click="openFullScreen" v-loading.fullscreen.lock="fullscreenLoading">
+            指令方式
+        </el-button>
+        <el-button type="primary" @click="openFullScreen2">
+            服务方式
+        </el-button>
+        <el-button :plain="true" @click="open2">成功</el-button>
+        <el-button :plain="true" @click="open3">警告</el-button>
+        <el-button :plain="true" @click="open">消息</el-button>
+        <el-button :plain="true" @click="open4">错误</el-button>
+        <el-button type="text" @click="openbox">点击打开 Message Box</el-button>
+
+        <el-button plain @click="openN3">
+            成功
+        </el-button>
+        <el-button plain @click="openN4">
+            警告
+        </el-button>
+        <el-button plain @click="openN5">
+            消息
+        </el-button>
+        <el-button plain @click="openN6">
+            错误
+        </el-button>
+    </div>
+    <script>
+        var vm = new Vue({
+            el: "#app",
+            data: {
+                fullscreenLoading: false
+            },
+            mounted() {
+
+            },
+            methods: {
+                openFullScreen() {
+                    this.fullscreenLoading = true;
+                    setTimeout(() => {
+                        this.fullscreenLoading = false;
+                    }, 10000);
+                },
+                openFullScreen2() {
+                    const loading = this.$loading({
+                        lock: true,
+                        text: 'Loading',
+                        spinner: 'el-icon-loading',
+                        background: 'rgba(0, 0, 0, 0.7)'
+                    });
+                    setTimeout(() => {
+                        loading.close();
+                    }, 10000);
+                },
+                open() {
+                    this.$message('这是一条消息提示');
+                },
+                open2() {
+                    this.$message({
+                        message: '恭喜你，这是一条成功消息',
+                        type: 'success'
+                    });
+                },
+
+                open3() {
+                    this.$message({
+                        message: '警告哦，这是一条警告消息',
+                        type: 'warning'
+                    });
+                },
+
+                open4() {
+                    this.$message.error('错了哦，这是一条错误消息');
+                },
+                openbox() {
+                    this.$alert('这是一段内容', '标题名称', {
+                        confirmButtonText: '确定',
+                        callback: action => {
+                            this.$message({
+                                type: 'info',
+                                message: `action: ${action}`
+                            });
+                        }
+                    });
+                },
+                openN3() {
+                    this.$notify({
+                        title: '成功',
+                        message: '这是一条成功的提示消息',
+                        type: 'success',
+                        duration: 0
+                    });
+                },
+
+                openN4() {
+                    this.$notify({
+                        title: '警告',
+                        message: '这是一条警告的提示消息',
+                        type: 'warning'
+                    });
+                },
+
+                openN5() {
+                    this.$notify.info({
+                        title: '消息',
+                        message: '这是一条消息的提示消息'
+                    });
+                },
+
+                openN6() {
+                    this.$notify.error({
+                        title: '错误',
+                        message: '这是一条错误的提示消息'
+                    });
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>
