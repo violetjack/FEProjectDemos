@@ -9,37 +9,40 @@ let instances = [];
 let seed = 1;
 
 const Notification = function(options) {
+  // 服务器渲染
   if (Vue.prototype.$isServer) return;
   options = options || {};
-  const userOnClose = options.onClose;
-  const id = 'notification_' + seed++;
-  const position = options.position || 'top-right';
-
+  const userOnClose = options.onClose; // 自定义关闭
+  const id = 'notification_' + seed++; // 组件 id
+  const position = options.position || 'top-right'; // 位置
+  // 关闭事件
   options.onClose = function() {
     Notification.close(id, userOnClose);
   };
-
+  // 组件实例
   instance = new NotificationConstructor({
     data: options
   });
-
+  // vnode
   if (isVNode(options.message)) {
     instance.$slots.default = [options.message];
     options.message = 'REPLACED_BY_VNODE';
   }
   instance.id = id;
   instance.vm = instance.$mount();
+  // 添加实例
   document.body.appendChild(instance.vm.$el);
   instance.vm.visible = true;
   instance.dom = instance.vm.$el;
   instance.dom.style.zIndex = PopupManager.nextZIndex();
-
+  // 偏移量计算
   let verticalOffset = options.offset || 0;
   instances.filter(item => item.position === position).forEach(item => {
     verticalOffset += item.$el.offsetHeight + 16;
   });
   verticalOffset += 16;
   instance.verticalOffset = verticalOffset;
+  // 传入数组
   instances.push(instance);
   return instance.vm;
 };

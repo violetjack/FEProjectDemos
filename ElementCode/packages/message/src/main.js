@@ -51,9 +51,12 @@ const Message = function(options) {
   };
 });
 
+// id 组件id
+// useOnClose 自定义关闭函数
 Message.close = function(id, userOnClose) {
   for (let i = 0, len = instances.length; i < len; i++) {
     if (id === instances[i].id) {
+      // 找到组件，执行自定义关闭函数并从数组中移除
       if (typeof userOnClose === 'function') {
         userOnClose(instances[i]);
       }

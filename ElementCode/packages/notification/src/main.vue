@@ -68,11 +68,11 @@
       horizontalClass() {
         return this.position.indexOf('right') > -1 ? 'right' : 'left';
       },
-
+      // 正则匹配 position 是 top 还是 bottom
       verticalProperty() {
         return /^top-/.test(this.position) ? 'top' : 'bottom';
       },
-
+      // 最后返回的内联样式
       positionStyle() {
         return {
           [this.verticalProperty]: `${ this.verticalOffset }px`

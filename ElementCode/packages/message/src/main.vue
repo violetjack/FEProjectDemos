@@ -15,7 +15,9 @@
       <i :class="iconClass" v-if="iconClass"></i>
       <i :class="typeClass" v-else></i>
       <slot>
+        <!-- 显示文本 -->
         <p v-if="!dangerouslyUseHTMLString" class="el-message__content">{{ message }}</p>
+        <!-- 显示HTML -->
         <p v-else v-html="message" class="el-message__content"></p>
       </slot>
       <i v-if="showClose" class="el-message__closeBtn el-icon-close" @click="close"></i>

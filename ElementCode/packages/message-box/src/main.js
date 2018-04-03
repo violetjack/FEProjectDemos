@@ -89,6 +89,7 @@ const showNextMsg = () => {
           instance[prop] = options[prop];
         }
       }
+      // 如果 currentMsg.options.callback 为 undefined
       if (options.callback === undefined) {
         instance.callback = defaultCallback;
       }
@@ -132,7 +133,8 @@ const MessageBox = function(options, callback) {
   }
 
   if (typeof Promise !== 'undefined') {
-    return new Promise((resolve, reject) => { // eslint-disable-line
+    // promise
+    return new Promise((resolve, reject) => {
       msgQueue.push({
         options: merge({}, defaults, MessageBox.defaults, options),
         callback: callback,
@@ -143,6 +145,7 @@ const MessageBox = function(options, callback) {
       showNextMsg();
     });
   } else {
+    // callback
     msgQueue.push({
       options: merge({}, defaults, MessageBox.defaults, options),
       callback: callback
