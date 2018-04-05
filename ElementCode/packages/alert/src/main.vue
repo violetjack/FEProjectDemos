@@ -6,12 +6,16 @@
       v-show="visible"
       role="alert"
     >
+      <!-- 图标 -->
       <i class="el-alert__icon" :class="[ iconClass, isBigIcon ]" v-if="showIcon"></i>
       <div class="el-alert__content">
+        <!-- 标题 -->
         <span class="el-alert__title" :class="[ isBoldTitle ]" v-if="title">{{ title }}</span>
         <slot>
+          <!-- 插槽，默认插入描述文本 -->
           <p class="el-alert__description" v-if="description">{{ description }}</p>
         </slot>
+        <!-- 关闭图标按钮 -->
         <i class="el-alert__closebtn" :class="{ 'is-customed': closeText !== '', 'el-icon-close': closeText === '' }" v-show="closable" @click="close()">{{closeText}}</i>
       </div>
     </div>
