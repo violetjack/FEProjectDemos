@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Transtiion</title>
+    <script src="vue.js"></script>
+    <style>
+        #demo {
+            width: 400px;
+            height: 400px;
+            border: solid 1px red;
+        }
+
+        .trans {
+            transition: all 1s;
+        }
+
+        .move {
+            transform: translateY(10px)
+        }
+
+        .fade-enter-active,
+        .fade-leave-active {
+            transition: all 10s;
+        }
+
+        
+        .fade-leave-to {
+            opacity: 0;
+        }
+
+        .fade-enter {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="demo">
+        <button onclick="change()">change</button>
+        <button onclick="add()">add</button>
+        <ul></ul>
+    </div>
+
+    <script>
+        var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+        var ul = document.getElementsByTagName("ul")[0]
+        for (var value of arr) {
+            var li = document.createElement("li")
+            li.textContent = value
+            li.className = "trans"
+            ul.appendChild(li)
+        }
+        // 19 28
+        function change() {
+            
+            var liArr = document.getElementsByTagName("li")
+            for (var key = 0; key < liArr.length; key++) {
+                var dy = (10 - 2 * arr[key]) * 22
+                console.log(dy)
+                if (arr[0] > arr[1]) {
+                    dy = 0
+                }
+                liArr[key].style.transform = `translateY(${dy}px)`
+            }
+            arr.reverse()
+        }
+
+        function add(){
+            var li = document.createElement("li")
+            li.textContent = arr.length + 1
+            arr.push(arr.length + 1)
+            li.className = "trans"                        
+            ul.appendChild(li)
+
+            setTimeout(() => {
+                var mli = document.getElementsByTagName("li")[0]
+                mli.className = "trans move"     
+            }, 500)
+        }
+    </script>
+</body>
+
+</html>

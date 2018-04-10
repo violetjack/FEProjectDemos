@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Transtiion</title>
+    <script src="vue.js"></script>
+    <style>
+        #demo {
+            width: 400px;
+            height: 400px;
+            border: solid 1px red;
+        }
+
+        p {
+            transition: all .5s;
+        }
+
+        .hello {
+            color: red;
+            font-size: 22px;
+            transform: translateX(5px);
+        }
+
+        /* .fade-enter-active,
+        .fade-leave-active {
+            transition: all .5s;
+        }
+
+        .fade-enter,
+        .fade-leave-to {
+            opacity: 0;
+        } */
+    </style>
+</head>
+
+<body>
+    <div id="demo">
+        <button @click="changeCls">change</button>
+        <transition name="fade">
+            <p :class="myCls">hello</p>
+        </transition>
+    </div>
+
+    </transition>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#demo',
+            data: {
+                myCls: ""
+            },
+            methods: {
+                changeCls: function () {
+                    if (this.myCls) {
+                        this.myCls = ""
+                    } else {
+                        this.myCls = "hello"
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

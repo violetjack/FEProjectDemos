@@ -3,7 +3,7 @@
 import { inBrowser, isIE9 } from 'core/util/index'
 import { addClass, removeClass } from './class-util'
 import { remove, extend, cached } from 'shared/util'
-
+// 解析 name 获取 transition 过渡 CSS
 export function resolveTransition (def?: string | Object): ?Object {
   if (!def) {
     return
@@ -20,7 +20,7 @@ export function resolveTransition (def?: string | Object): ?Object {
     return autoCssTransition(def)
   }
 }
-
+// 缓存过渡 CSS 过渡对象
 const autoCssTransition: (name: string) => Object = cached(name => {
   return {
     enterClass: `${name}-enter`,
@@ -70,6 +70,7 @@ export function nextFrame (fn: Function) {
   })
 }
 
+// 添加过渡 class
 export function addTransitionClass (el: any, cls: string) {
   const transitionClasses = el._transitionClasses || (el._transitionClasses = [])
   if (transitionClasses.indexOf(cls) < 0) {
@@ -78,6 +79,7 @@ export function addTransitionClass (el: any, cls: string) {
   }
 }
 
+// 移除过渡 class
 export function removeTransitionClass (el: any, cls: string) {
   if (el._transitionClasses) {
     remove(el._transitionClasses, cls)
@@ -85,6 +87,7 @@ export function removeTransitionClass (el: any, cls: string) {
   removeClass(el, cls)
 }
 
+// 当过渡效果结束
 export function whenTransitionEnds (
   el: Element,
   expectedType: ?string,
@@ -113,8 +116,10 @@ export function whenTransitionEnds (
   el.addEventListener(event, onEnd)
 }
 
+// 正则
 const transformRE = /\b(transform|all)(,|$)/
 
+// 获取 transition 信息
 export function getTransitionInfo (el: Element, expectedType?: ?string): {
   type: ?string;
   propCount: number;
@@ -168,7 +173,7 @@ export function getTransitionInfo (el: Element, expectedType?: ?string): {
     hasTransform
   }
 }
-
+// 获取延时
 function getTimeout (delays: Array<string>, durations: Array<string>): number {
   /* istanbul ignore next */
   while (delays.length < durations.length) {
@@ -179,7 +184,7 @@ function getTimeout (delays: Array<string>, durations: Array<string>): number {
     return toMs(d) + toMs(delays[i])
   }))
 }
-
+// 转为毫秒
 function toMs (s: string): number {
   return Number(s.slice(0, -1)) * 1000
 }
