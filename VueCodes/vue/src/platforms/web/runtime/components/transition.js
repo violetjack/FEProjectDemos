@@ -146,7 +146,7 @@ export default {
       : isPrimitive(child.key)
         ? (String(child.key).indexOf(id) === 0 ? child.key : id + child.key)
         : child.key
-
+    // extractTransitionData 函数返回组件的所有 propsData 和 listener
     const data: Object = (child.data || (child.data = {})).transition = extractTransitionData(this)
     const oldRawChild: VNode = this._vnode
     const oldChild: VNode = getRealChild(oldRawChild)
@@ -169,6 +169,7 @@ export default {
       // important for dynamic transitions!
       const oldData: Object = oldChild.data.transition = extend({}, data)
       // handle transition mode
+      // 控制离开/进入的过渡时间序列。有效的模式有 "out-in" 和 "in-out"；默认同时生效。
       if (mode === 'out-in') {
         // return placeholder node and queue update when leave finishes
         this._leaving = true

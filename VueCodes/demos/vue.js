@@ -7546,7 +7546,7 @@ function enter (vnode, toggleDisplay) {
 
 function leave (vnode, rm) {
   var el = vnode.elm;
-
+  console.log(rm.toString())
   // call enter callback now
   if (isDef(el._enterCb)) {
     el._enterCb.cancelled = true;
@@ -7723,7 +7723,7 @@ var platformModules = [
 // the directive module should be applied last, after all
 // built-in modules have been applied.
 var modules = platformModules.concat(baseModules);
-
+console.log("modules", modules)
 var patch = createPatchFunction({ nodeOps: nodeOps, modules: modules });
 
 /**

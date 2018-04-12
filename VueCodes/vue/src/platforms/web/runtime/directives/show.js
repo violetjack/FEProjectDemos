@@ -26,9 +26,9 @@ export default {
   },
 
   update (el: any, { value, oldValue }: VNodeDirective, vnode: VNodeWithData) {
-    /* istanbul ignore if */
     if (value === oldValue) return
     vnode = locateNode(vnode)
+    // 过渡效果
     const transition = vnode.data && vnode.data.transition
     if (transition) {
       vnode.data.show = true
@@ -42,6 +42,7 @@ export default {
         })
       }
     } else {
+      // 隐藏
       el.style.display = value ? el.__vOriginalDisplay : 'none'
     }
   },

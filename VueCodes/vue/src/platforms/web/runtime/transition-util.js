@@ -3,7 +3,7 @@
 import { inBrowser, isIE9 } from 'core/util/index'
 import { addClass, removeClass } from './class-util'
 import { remove, extend, cached } from 'shared/util'
-// 解析 name 获取 transition 过渡 CSS
+// 解析 transition 过渡 CSS
 export function resolveTransition (def?: string | Object): ?Object {
   if (!def) {
     return

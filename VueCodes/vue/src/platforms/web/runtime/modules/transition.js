@@ -65,7 +65,8 @@ export function enter (vnode: VNodeWithData, toggleDisplay: ?() => void) {
     https://cn.vuejs.org/v2/guide/transitions.html#%E6%98%BE%E6%80%A7%E7%9A%84%E8%BF%87%E6%B8%A1%E6%8C%81%E7%BB%AD%E6%97%B6%E9%97%B4
   */
 
-  const data = resolveTransition(vnode.data.transition)
+  // 解析 transition 的数据（class、tag、name等）
+  const data = resolveTransition(vnode.data.transition) // data.transition 中包括了 <transition> 标签的内容
   if (isUndef(data)) {
     return
   }
@@ -95,10 +96,7 @@ export function enter (vnode: VNodeWithData, toggleDisplay: ?() => void) {
     duration
   } = data
 
-  // activeInstance will always be the <transition> component managing this
-  // transition. One edge case to check is when the <transition> is placed
-  // as the root node of a child component. In that case we need to check
-  // <transition>'s parent for appear check.
+  // 将作为子组件的根节点放置时，我们需要检查 <transition> 的父元素是否出现检查。
   let context = activeInstance
   let transitionNode = activeInstance.$vnode
   while (transitionNode && transitionNode.parent) {
@@ -112,16 +110,21 @@ export function enter (vnode: VNodeWithData, toggleDisplay: ?() => void) {
     return
   }
 
+  // 获取进入的 class
+  // v-enter
   const startClass = isAppear && appearClass
     ? appearClass
     : enterClass
+  // v-enter-active
   const activeClass = isAppear && appearActiveClass
     ? appearActiveClass
     : enterActiveClass
+  // v-enter-to
   const toClass = isAppear && appearToClass
     ? appearToClass
     : enterToClass
 
+  // 4个生命周期钩子函数
   const beforeEnterHook = isAppear
     ? (beforeAppear || beforeEnter)
     : beforeEnter
@@ -135,6 +138,7 @@ export function enter (vnode: VNodeWithData, toggleDisplay: ?() => void) {
     ? (appearCancelled || enterCancelled)
     : enterCancelled
 
+  // https://cn.vuejs.org/v2/guide/transitions.html#显性的过渡持续时间
   const explicitEnterDuration: any = toNumber(
     isObject(duration)
       ? duration.enter
@@ -148,15 +152,19 @@ export function enter (vnode: VNodeWithData, toggleDisplay: ?() => void) {
   const expectsCSS = css !== false && !isIE9
   const userWantsControl = getHookArgumentsLength(enterHook)
 
+  // 完成进入过渡后的回调函数
   const cb = el._enterCb = once(() => {
     if (expectsCSS) {
+      // 移除 v-enter-to 和 v-enter-active
       removeTransitionClass(el, toClass)
       removeTransitionClass(el, activeClass)
     }
     if (cb.cancelled) {
       if (expectsCSS) {
+        // 移除 v-enter
         removeTransitionClass(el, startClass)
       }
+      // 调用 enter-cancelled
       enterCancelledHook && enterCancelledHook(el)
     } else {
       afterEnterHook && afterEnterHook(el)
@@ -165,7 +173,7 @@ export function enter (vnode: VNodeWithData, toggleDisplay: ?() => void) {
   })
 
   if (!vnode.data.show) {
-    // remove pending leave element on enter by injecting an insert hook
+    // 通过注入一个 insert 钩子，将待处理的 leave 元素移除。
     mergeVNodeHook(vnode, 'insert', () => {
       const parent = el.parentNode
       const pendingNode = parent && parent._pending && parent._pending[vnode.key]
@@ -181,17 +189,24 @@ export function enter (vnode: VNodeWithData, toggleDisplay: ?() => void) {
 
   // start enter transition
   beforeEnterHook && beforeEnterHook(el)
+  // 预期 CSS
   if (expectsCSS) {
+    // 添加 v-enter v-enter-active
     addTransitionClass(el, startClass)
     addTransitionClass(el, activeClass)
+    // 下一帧
     nextFrame(() => {
+      // 移除 v-enter
       removeTransitionClass(el, startClass)
       if (!cb.cancelled) {
+        // 添加 v-enter-to
         addTransitionClass(el, toClass)
         if (!userWantsControl) {
+          // 预期进入时间
           if (isValidDuration(explicitEnterDuration)) {
             setTimeout(cb, explicitEnterDuration)
           } else {
+            // 当 transition 结束
             whenTransitionEnds(el, type, cb)
           }
         }
@@ -212,7 +227,7 @@ export function enter (vnode: VNodeWithData, toggleDisplay: ?() => void) {
 export function leave (vnode: VNodeWithData, rm: Function) {
   const el: any = vnode.elm
 
-  // call enter callback now
+  // 触发进入的回调函数
   if (isDef(el._enterCb)) {
     el._enterCb.cancelled = true
     el._enterCb()

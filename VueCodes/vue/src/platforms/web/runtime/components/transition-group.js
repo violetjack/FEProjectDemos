@@ -23,6 +23,7 @@ import {
   removeTransitionClass
 } from '../transition-util'
 
+// 合并 props 中添加标签名和 move 类，移除 mode （只有 transition 中有效）
 const props = extend({
   tag: String,
   moveClass: String
@@ -72,12 +73,15 @@ export default {
       this.kept = h(tag, null, kept)
       this.removed = removed
     }
-
+    /* 
+      createElement(tag, data, children)
+    */
     return h(tag, null, children)
   },
 
   beforeUpdate () {
-    // force removing pass
+    // 强制移除元素
+    // patch (oldVnode, vnode, hydrating, removeOnly, parentElm, refElm)
     this.__patch__(
       this._vnode,
       this.kept,
@@ -88,7 +92,9 @@ export default {
   },
 
   updated () {
+    // 此时元素已经重新排序
     const children: Array<VNode> = this.prevChildren
+    // v-move 或 自定义 moveClass
     const moveClass: string = this.moveClass || ((this.name || 'v') + '-move')
     if (!children.length || !this.hasMove(children[0].elm, moveClass)) {
       return
@@ -151,6 +157,7 @@ export default {
   }
 }
 
+// 调用回调函数
 function callPendingCbs (c: VNode) {
   /* istanbul ignore if */
   if (c.elm._moveCb) {
@@ -162,16 +169,19 @@ function callPendingCbs (c: VNode) {
   }
 }
 
+// 记录位置
 function recordPosition (c: VNode) {
   c.data.newPos = c.elm.getBoundingClientRect()
 }
 
+// 使用 transition
 function applyTranslation (c: VNode) {
   const oldPos = c.data.pos
   const newPos = c.data.newPos
   const dx = oldPos.left - newPos.left
   const dy = oldPos.top - newPos.top
   if (dx || dy) {
+    // 定义 0 秒的 translate 内联样式把元素移动到原来的样子
     c.data.moved = true
     const s = c.elm.style
     s.transform = s.WebkitTransform = `translate(${dx}px,${dy}px)`

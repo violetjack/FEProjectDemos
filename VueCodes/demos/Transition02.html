@@ -14,11 +14,15 @@
 
         .component-fade-enter-active,
         .component-fade-leave-active {
-            transition: opacity .3s ease;
+            transition: opacity 1s ease;
         }
 
         .component-fade-enter,
         .component-fade-leave-to {
+            opacity: 0;
+        }
+
+        .component-fade-leave-act {
             opacity: 0;
         }
 
@@ -29,10 +33,14 @@
 
         .list-enter-active,
         .list-leave-active {
-            transition: all .3s;
+            transition: all 15s;
         }
 
-        .list-enter,
+        .list-enter {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+
         .list-leave-to {
             opacity: 0;
             transform: translateY(30px);
@@ -46,8 +54,16 @@
             <input type="radio" v-model="view" value="v-a" />A</label>
         <label>
             <input type="radio" v-model="view" value="v-b" />B</label>
-        <transition name="component-fade" mode="out-in">
+        <!-- <transition name="component-fade" mode="out-in">
             <component v-bind:is="view"></component>
+        </transition> -->
+        <transition name="component-fade" mode="out-in">
+            <p key="A" v-if="view == 'v-a'">hello A</p>
+            <p key="B" v-else>hello B</p>
+        </transition>
+        <button @click="mshow = !mshow">show</button>
+        <transition name="component-fade" mode="out-in">
+            <p v-show="mshow">hello</p>
         </transition>
         <div id="list-demo" class="demo">
             <button v-on:click="add">Add</button>
@@ -68,6 +84,7 @@
             el: '#demo',
             data: {
                 view: 'v-a',
+                mshow: true,
                 items: [1, 2, 3, 4, 5, 6, 7, 8, 9],
                 nextNum: 10
             },

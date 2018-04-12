@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Transtiion</title>
+
+    <style>
+        .flip-list-move {
+            transition: transform 20s;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.14.1/lodash.min.js"></script>
+
+    <div id="demo">
+        <button v-on:click="shuffle">Shuffle</button>
+        <transition-group name="flip-list" tag="ul">
+            <li v-for="item in items" v-bind:key="item">
+                {{ item }}
+            </li>
+        </transition-group>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#demo',
+            data: {
+                items: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+            },
+            methods: {
+                shuffle: function () {
+                    this.items = _.shuffle(this.items)
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

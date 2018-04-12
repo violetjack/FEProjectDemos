@@ -4,7 +4,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Transtiion</title>
-    <script src="vue.js"></script>
     <style>
         #demo {
             width: 400px;
@@ -12,34 +11,16 @@
             border: solid 1px red;
         }
 
-        .trans {
-            transition: all 1s;
-        }
-
         .move {
-            transform: translateY(10px)
-        }
-
-        .fade-enter-active,
-        .fade-leave-active {
-            transition: all 10s;
-        }
-
-        
-        .fade-leave-to {
-            opacity: 0;
-        }
-
-        .fade-enter {
-            opacity: 1;
+            /* transform: translate(0px, 0px); */
+            transition: all 1s;
         }
     </style>
 </head>
 
 <body>
     <div id="demo">
-        <button onclick="change()">change</button>
-        <button onclick="add()">add</button>
+        <button>change</button>
         <ul></ul>
     </div>
 
@@ -53,32 +34,61 @@
             li.className = "trans"
             ul.appendChild(li)
         }
-        // 19 28
-        function change() {
-            
-            var liArr = document.getElementsByTagName("li")
-            for (var key = 0; key < liArr.length; key++) {
-                var dy = (10 - 2 * arr[key]) * 22
-                console.log(dy)
-                if (arr[0] > arr[1]) {
-                    dy = 0
-                }
-                liArr[key].style.transform = `translateY(${dy}px)`
-            }
+
+        var btn = document.getElementsByTagName("button")[0]
+        btn.onclick = function () {
+            var oldUl = document.getElementsByTagName("ul")[0]
+            var lis = document.getElementsByTagName("li")
+            var oldPos = getPos(lis)
+
             arr.reverse()
+            var newUl = document.createElement("ul")
+            for (var value of arr) {
+                var li = document.createElement("li")
+                li.textContent = value
+                li.className = "trans"
+                newUl.appendChild(li)
+            }
+            var container = document.getElementById("demo")
+            container.replaceChild(newUl, oldUl)
+
+            init(oldPos)
         }
 
-        function add(){
-            var li = document.createElement("li")
-            li.textContent = arr.length + 1
-            arr.push(arr.length + 1)
-            li.className = "trans"                        
-            ul.appendChild(li)
+        function getPos(NodeArr) {
+            var PositionArr = []
+            for (let i = 0, len = NodeArr.length; i < len; i++) {
+                PositionArr[NodeArr[i].textContent] = NodeArr[i].getBoundingClientRect()
+            }
+            return PositionArr
+        }
 
-            setTimeout(() => {
-                var mli = document.getElementsByTagName("li")[0]
-                mli.className = "trans move"     
-            }, 500)
+        function init(oldPositions) {
+            var liArr = document.getElementsByTagName("li")
+            var newPositions = getPos(liArr)
+
+            for (var key = 0; key < liArr.length; key++) {
+                var text = liArr[key].textContent
+                const oldPos = oldPositions[text]
+                const newPos = newPositions[text]
+                const dx = oldPos.left - newPos.left
+                const dy = oldPos.top - newPos.top
+                if (dx || dy) {
+                    var s = liArr[key].style
+                    s.transform = s.WebkitTransform = `translate(${dx}px,${dy}px)`
+                    s.transitionDuration = '0s'
+                }
+            }
+            setTimeout(trans, 100)
+        }
+
+        function trans() {
+            var liArr = document.getElementsByTagName("li")
+            for (var key = 0; key < liArr.length; key++) {
+                var s = liArr[key].style
+                s.transform = s.WebkitTransform = s.transitionDuration = ""
+                liArr[key].className = "move"
+            }
         }
     </script>
 </body>
