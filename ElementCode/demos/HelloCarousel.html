@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>select</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- 引入组件库 -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <style>
+        .block {
+            display: inline-block;
+            width: 49%;
+        }
+
+        .el-carousel__item h3 {
+            color: #475669;
+            font-size: 14px;
+            opacity: 0.75;
+            line-height: 150px;
+            margin: 0;
+        }
+
+        .el-carousel__item:nth-child(2n) {
+            background-color: #99a9bf;
+        }
+
+        .el-carousel__item:nth-child(2n+1) {
+            background-color: #d3dce6;
+        }
+
+        h3 {
+            height: 150px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="block">
+            <span class="demonstration">默认 Hover 指示器触发</span>
+            <el-carousel height="150px" :autoplay="play">
+                <el-carousel-item v-for="item in 4" :key="item">
+                    <h3>{{ item }}</h3>
+                </el-carousel-item>
+            </el-carousel>
+        </div>
+        <div class="block">
+            <span class="demonstration">Click 指示器触发</span>
+            <el-carousel trigger="click" height="150px" :autoplay="play">
+                <el-carousel-item v-for="item in 4" :key="item">
+                    <h3>{{ item }}</h3>
+                </el-carousel-item>
+            </el-carousel>
+        </div>
+        <div>
+            <span class="demonstration">卡片化</span>
+            <el-carousel :interval="4000" type="card" height="150px" @change="mc" ref="car" :autoplay="play">
+                <el-carousel-item v-for="item in 6" :key="item">
+                    <h3>{{ item }}</h3>
+                </el-carousel-item>
+            </el-carousel>
+        </div>
+        <button @click="first">first</button>
+        <button @click="pre">pre</button>
+        <button @click="next">next</button>
+    </div>
+    <script>
+        var vm = new Vue({
+            el: "#app",
+            data: {
+                play: false
+            },
+            methods: {
+                mc() {
+                    console.log("change")
+                },
+
+                // 假设为 el-carousel 设置了 ref="car"
+                // setActiveItem	手动切换幻灯片	需要切换的幻灯片的索引，从 0 开始；或相应 el-carousel-item 的 name 属性值
+                // prev	切换至上一张幻灯片
+                // next 切换至下一张幻灯片
+                pre() {
+                    this.$refs.car.prev()
+                },
+                next() {
+                    this.$refs.car.next()
+                },
+                first() {
+                    this.$refs.car.setActiveItem(0)
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

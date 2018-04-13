@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>select</title>
+
+    <style>
+        #container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .block {
+            position: absolute;
+            display: inline-block;
+            width: 100%;
+            height: 100%;
+            transition: all 1s;
+        }
+
+        .block-01 {
+            background-color: #99a9bf;
+        }
+
+        .block-02 {
+            background-color: #d3dce6;
+        }
+
+        h1 {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            text-align: center;
+            transform: translateY(-50%);
+            padding: 0;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div id="container">
+            <div class="block block-01">
+                <h1>1</h1>
+            </div>
+            <div class="block block-02">
+                <h1>2</h1>
+            </div>
+            <div class="block block-01">
+                <h1>3</h1>
+            </div>
+            <div class="block block-02">
+                <h1>4</h1>
+            </div>
+        </div>
+
+        <button onclick="prev()">prev</button>
+        <button onclick="next()">next</button>
+    </div>
+    <script>
+        var config = {
+            height: "300px",
+            index: 0,
+        }
+
+        var container = document.getElementById("container")
+        container.style.height = config.height
+
+        function getOffSet() {
+            var blocks = document.getElementsByClassName("block")
+            var offsetWidth = document.getElementById("container").offsetWidth
+            for (let index = 0, len = blocks.length; index < len; index++) {
+                var s = blocks[index].style
+                let translate = offsetWidth * (index - config.index)
+                s.transform = s.msTransform = s.webkitTransform = `translateX(${translate}px)`
+            }
+        }
+
+        getOffSet()
+
+        function prev() {
+            if (config.index > 0) {
+                config.index--
+                getOffSet()
+            }
+        }
+
+        function next() {
+            if (config.index < 3) {
+                config.index++
+                getOffSet()
+            }
+        }
+
+    </script>
+</body>
+
+</html>
