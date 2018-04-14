@@ -62,13 +62,16 @@ export default {
       }
       return index;
     },
-
+    // 计算卡片化中组件的位置
     calculateTranslate(index, activeIndex, parentWidth) {
       if (this.inStage) {
+        // 其他卡片
         return parentWidth * ((2 - CARD_SCALE) * (index - activeIndex) + 1) / 4;
       } else if (index < activeIndex) {
+        // 左边卡片
         return -(1 + CARD_SCALE) * parentWidth / 4;
       } else {
+        // 右边卡片
         return (3 + CARD_SCALE) * parentWidth / 4;
       }
     },
