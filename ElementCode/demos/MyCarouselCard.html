@@ -63,9 +63,12 @@
             <div class="block block-01">
                 <h1>7</h1>
             </div>
+            <div class="block block-01">
+                <h1>8</h1>
+            </div>
         </div>
-        <button onclick="prev()">prev</button>
-        <button onclick="next()">next</button>
+        <button id="btnPrev">prev</button>
+        <button id="btnNext">next</button>
     </div>
     <script>
         var config = {
@@ -73,15 +76,6 @@
             index: 0,
             scale: 0.83
         }
-
-        function createList(count) {
-            for (let i = 0; i < count; i++) {
-                var div = document.createElement("div")
-                div.textContent = i + 1
-                div.className = "block block-0" + (i % 2 + 1)
-            }
-        }
-
 
         var container = document.getElementById("container")
         container.style.height = config.height
@@ -91,27 +85,6 @@
         function getOffSet() {
             var blocks = document.getElementsByClassName("block")
             var offsetWidth = document.getElementById("container").offsetWidth
-
-            // var curS = blocks[config.index].style
-            // var translate = offsetWidth / 4
-            // curS.transform = curS.msTransform = curS.webkitTransform = `translateX(${translate}px)`
-            // curS.zIndex = 2
-
-            // if (config.index == 0) {
-            //     var curS = blocks[blockLength - 1].style
-            //     var translate = -(1 - config.scale) * (offsetWidth / 2) / 2
-            //     curS.transform = curS.msTransform = curS.webkitTransform = `translateX(${translate}px) scale(${config.scale})`
-            //     curS.zIndex = 1
-
-            //     var i = 1
-            //     while (i < blockLength - 1) {
-            //         var curS = blocks[i].style
-            //         var translate = (2 - config.scale) * (offsetWidth / 2) + (i - 1) * (offsetWidth / 2) * config.scale
-            //         curS.transform = curS.msTransform = curS.webkitTransform = `translateX(${translate}px) scale(${config.scale})`
-            //         curS.zIndex = 1
-            //         i++
-            //     }
-            // }
 
             for (let i = 0, len = blocks.length; i < len; i++) {
                 if (i == config.index) {
@@ -136,32 +109,53 @@
             if ((activeIndex == 0 && index == length - 1) || (index == activeIndex - 1)) {
                 // 左边卡片
                 return -(1 - config.scale) * parentWidth / 4;
-            } else if ((activeIndex == length - 1 && index == 0) || (index == activeIndex + 1)) {
+            }
+            if ((activeIndex == length - 1 && index == 0) || (index == activeIndex + 1)) {
                 // 右边卡片
                 return (2 - config.scale) * (parentWidth / 2)
-            } else {
-                // 其他卡片
-                return ( 1 + config.index / 4) * parentWidth
             }
+            // 其他卡片
+            return (1 + config.index / 4) * parentWidth
         }
 
         function prev() {
+            pauseTimer()
             if (config.index > 0) {
                 config.index--
             } else {
                 config.index = blockLength - 1
             }
             getOffSet()
+            startTimer()
         }
 
         function next() {
+            pauseTimer()
             if (config.index < blockLength - 1) {
                 config.index++
             } else {
                 config.index = 0
             }
             getOffSet()
+            startTimer()
         }
+
+        document.getElementById("btnPrev").onclick = prev
+        document.getElementById("btnNext").onclick = next
+
+        var timer = null
+
+        function pauseTimer() {
+            if (timer) {
+                clearInterval(timer)
+            }
+        }
+
+        function startTimer() {
+            timer = setInterval(next, 3000)
+        }
+
+        startTimer()
     </script>
 </body>
 

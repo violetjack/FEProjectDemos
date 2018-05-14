@@ -82,8 +82,14 @@
                 s.transition = ``
                 s.transform = s.msTransform = s.webkitTransform = `translateX(${translate}px)`
 
-                if (config.index == 0 || config.index == blocks.length - 1) {
-                    s.transition = `all 1s`
+                if (config.index == 0) {
+                    blocks[config.index].style.transition = `all 1s`
+                    blocks[blocks.length - 1].style.transition = `all 1s`
+                    blocks[config.index + 1].style.transition = `all 1s`
+                } else if (config.index == blocks.length - 1) {
+                    blocks[config.index].style.transition = `all 1s`
+                    blocks[config.index - 1].style.transition = `all 1s`
+                    blocks[config.index + 1].style.transition = `all 1s`
                 } else {
                     if (index == config.index) {
                         blocks[config.index].style.transition = `all 1s`
@@ -159,7 +165,7 @@
         }
 
         function startTimer() {
-            // timer = setInterval(next, 3000)
+            timer = setInterval(next, 3000)
         }
 
         startTimer()
